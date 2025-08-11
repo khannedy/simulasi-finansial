@@ -71,11 +71,11 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 		// Calculate zakat
 		await page.getByRole('button', { name: 'Hitung Zakat' }).click();
 
-		// Check results
+		// Check results using ID selectors
 		await expect(page.getByText('Status Kewajiban Zakat')).toBeVisible();
-		await expect(page.locator('.bg-blue-50 .text-2xl:has-text("Rp 90.000.000")')).toBeVisible(); // Total harta
-		await expect(page.locator('.bg-green-50 .text-2xl:has-text("Wajib")')).toBeVisible(); // Status should be wajib
-		await expect(page.locator('.text-3xl:has-text("Rp 2.250.000")')).toBeVisible(); // 2.5% of 90M = 2.25M
+		await expect(page.locator('#total-harta-amount')).toContainText('Rp 90.000.000'); // Total harta
+		await expect(page.locator('#status-zakat')).toContainText('Wajib'); // Status should be wajib
+		await expect(page.locator('#jumlah-zakat-amount')).toContainText('Rp 2.250.000'); // 2.5% of 90M = 2.25M
 	});
 
 	test('input dengan harga satuan berfungsi dengan benar', async ({ page }) => {
@@ -92,10 +92,10 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 		// Calculate zakat - this tests the core calculation logic
 		await page.getByRole('button', { name: 'Hitung Zakat' }).click();
 
-		// Check results - the fix ensures 20M is calculated and processed correctly
-		await expect(page.locator('.bg-blue-50 .text-2xl:has-text("Rp 20.000.000")')).toBeVisible(); // Total harta
-		await expect(page.locator('.bg-red-50 .text-2xl:has-text("Belum Wajib")')).toBeVisible(); // Status should be belum wajib (20M < 85M nisab)
-		await expect(page.locator('.text-lg:has-text("Zakat Belum Wajib")')).toBeVisible(); // Zakat not required message
+		// Check results using ID selectors - the fix ensures 20M is calculated and processed correctly
+		await expect(page.locator('#total-harta-amount')).toContainText('Rp 20.000.000'); // Total harta
+		await expect(page.locator('#status-zakat')).toContainText('Belum Wajib'); // Status should be belum wajib (20M < 85M nisab)
+		await expect(page.getByText('Zakat Belum Wajib').first()).toBeVisible(); // Zakat not required message
 		
 		// The bug is fixed - our Number() conversion in updateNilaiTotal ensures proper calculation
 	});
@@ -108,11 +108,11 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 		// Calculate zakat
 		await page.getByRole('button', { name: 'Hitung Zakat' }).click();
 
-		// Check results
-		await expect(page.locator('.bg-blue-50 .text-2xl:has-text("Rp 50.000.000")')).toBeVisible(); // Total harta
-		await expect(page.getByText('Rp 85.000.000')).toBeVisible(); // Nisab
-		await expect(page.locator('.bg-red-50 .text-2xl:has-text("Belum Wajib")')).toBeVisible(); // Status should be belum wajib
-		await expect(page.locator('.text-lg:has-text("Zakat Belum Wajib")')).toBeVisible();
+		// Check results using ID selectors
+		await expect(page.locator('#total-harta-amount')).toContainText('Rp 50.000.000'); // Total harta
+		await expect(page.locator('#nisab-amount')).toContainText('Rp 85.000.000'); // Nisab
+		await expect(page.locator('#status-zakat')).toContainText('Belum Wajib'); // Status should be belum wajib
+		await expect(page.getByText('Zakat Belum Wajib').first()).toBeVisible();
 		await expect(page.getByText('Total harta belum mencapai nisab minimum')).toBeVisible();
 	});
 
@@ -132,10 +132,10 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 		// Calculate zakat
 		await page.getByRole('button', { name: 'Hitung Zakat' }).click();
 
-		// Total should be 30M + 60M = 90M (above nisab)
-		await expect(page.locator('.bg-blue-50 .text-2xl:has-text("Rp 90.000.000")')).toBeVisible(); // Total harta
-		await expect(page.locator('.bg-green-50 .text-2xl:has-text("Wajib")')).toBeVisible(); // Status should be wajib
-		await expect(page.locator('.text-3xl:has-text("Rp 2.250.000")')).toBeVisible(); // 2.5% of 90M = 2.25M
+		// Total should be 30M + 60M = 90M (above nisab) using ID selectors
+		await expect(page.locator('#total-harta-amount')).toContainText('Rp 90.000.000'); // Total harta
+		await expect(page.locator('#status-zakat')).toContainText('Wajib'); // Status should be wajib
+		await expect(page.locator('#jumlah-zakat-amount')).toContainText('Rp 2.250.000'); // 2.5% of 90M = 2.25M
 
 		// Check detail table
 		await expect(page.getByText('Detail Harta')).toBeVisible();
@@ -283,9 +283,9 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 		// Wait for result section
 		await expect(page.getByText('Status Kewajiban Zakat')).toBeVisible({ timeout: 5000 });
 
-		// Check if amounts are formatted as Rupiah (use more specific locators)
-		await expect(page.locator('.bg-blue-50 .text-2xl', { hasText: 'Rp 100.000.000' })).toBeVisible({ timeout: 10000 }); // Total harta summary card
-		await expect(page.getByText('Rp 85.000.000')).toBeVisible({ timeout: 10000 }); // Nisab
-		await expect(page.locator('.bg-green-50 .text-3xl', { hasText: 'Rp 2.500.000' })).toBeVisible({ timeout: 10000 }); // Zakat amount (2.5% of 100M)
+		// Check if amounts are formatted as Rupiah using ID selectors
+		await expect(page.locator('#total-harta-amount')).toContainText('Rp 100.000.000', { timeout: 10000 }); // Total harta summary card
+		await expect(page.locator('#nisab-amount')).toContainText('Rp 85.000.000', { timeout: 10000 }); // Nisab
+		await expect(page.locator('#jumlah-zakat-amount')).toContainText('Rp 2.500.000', { timeout: 10000 }); // Zakat amount (2.5% of 100M)
 	});
 });

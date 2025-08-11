@@ -103,11 +103,11 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		// Total kupon bersih = 54,000 * 12 = 648,000
 		// Total pendapatan = 648,000 + 12,000,000 = 12,648,000
 
-		// Check if amounts are formatted as Rupiah (with space after Rp)
-		await expect(page.locator('text=Rp 720.000')).toBeVisible(); // Total kupon kotor
-		await expect(page.locator('text=Rp 72.000')).toBeVisible(); // Total pajak
-		await expect(page.locator('text=Rp 648.000')).toBeVisible(); // Total kupon bersih
-		await expect(page.locator('text=Rp 12.648.000')).toBeVisible(); // Total pendapatan
+		// Check if amounts are formatted correctly using IDs
+		await expect(page.locator('#kupon-kotor-amount')).toContainText('Rp 720.000'); // Total kupon kotor
+		await expect(page.locator('#pajak-amount')).toContainText('Rp 72.000'); // Total pajak
+		await expect(page.locator('#kupon-bersih-amount')).toContainText('Rp 648.000'); // Total kupon bersih
+		await expect(page.locator('#total-pendapatan-amount')).toContainText('Rp 12.648.000'); // Total pendapatan
 	});
 
 	test('tombol reset berfungsi dengan benar', async ({ page }) => {
@@ -167,8 +167,8 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		).toBeVisible();
 		await expect(page.getByText('Simulasi Obligasi')).toBeVisible();
 
-		// Navigate to obligasi page from home
-		await page.getByRole('link', { name: /Mulai Simulasi/ }).click();
+		// Navigate to obligasi page from home - use more specific selector
+		await page.getByRole('link').filter({ hasText: 'Simulasi Obligasi' }).click();
 		await expect(page).toHaveURL('/obligasi');
 		await expect(page.locator('h1')).toContainText('Simulasi Obligasi');
 	});

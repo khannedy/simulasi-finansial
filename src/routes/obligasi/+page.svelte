@@ -197,25 +197,25 @@
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 						<div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
 							<div class="text-blue-600 text-sm font-medium">Total Kupon Kotor</div>
-							<div class="text-2xl font-bold text-gray-800 mt-1">
+							<div id="kupon-kotor-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.summary.totalKuponKotor)}
 							</div>
 						</div>
 						<div class="bg-red-50 p-6 rounded-xl border border-red-100">
 							<div class="text-red-600 text-sm font-medium">Total Pajak (10%)</div>
-							<div class="text-2xl font-bold text-gray-800 mt-1">
+							<div id="pajak-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.summary.totalPajak)}
 							</div>
 						</div>
 						<div class="bg-green-50 p-6 rounded-xl border border-green-100">
 							<div class="text-green-600 text-sm font-medium">Total Kupon Bersih</div>
-							<div class="text-2xl font-bold text-gray-800 mt-1">
+							<div id="kupon-bersih-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.summary.totalKuponBersih)}
 							</div>
 						</div>
 						<div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
 							<div class="text-purple-600 text-sm font-medium">Total Pendapatan</div>
-							<div class="text-2xl font-bold text-gray-800 mt-1">
+							<div id="total-pendapatan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.summary.totalPendapatan)}
 							</div>
 							<div class="text-xs text-gray-500 mt-1">Kupon + Pokok</div>

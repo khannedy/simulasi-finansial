@@ -165,8 +165,9 @@
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 						<!-- Nama Harta -->
 						<div class="space-y-2">
-							<label class="block text-sm font-medium text-gray-700"> Nama Harta </label>
+							<label for="nama-harta-{index}" class="block text-sm font-medium text-gray-700"> Nama Harta </label>
 							<input
+								id="nama-harta-{index}"
 								type="text"
 								bind:value={harta.nama}
 								placeholder="Contoh: Emas, Tabungan, Investasi"
@@ -176,8 +177,9 @@
 
 						<!-- Jenis Input -->
 						<div class="space-y-2">
-							<label class="block text-sm font-medium text-gray-700"> Jenis Input </label>
+							<label for="jenis-input-{index}" class="block text-sm font-medium text-gray-700"> Jenis Input </label>
 							<select
+								id="jenis-input-{index}"
 								bind:value={harta.jenisInput}
 								class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
 							>
@@ -189,8 +191,9 @@
 						{#if harta.jenisInput === 'harga_satuan'}
 							<!-- Harga Satuan -->
 							<div class="space-y-2">
-								<label class="block text-sm font-medium text-gray-700"> Harga Satuan (Rp) </label>
+								<label for="harga-satuan-{index}" class="block text-sm font-medium text-gray-700"> Harga Satuan (Rp) </label>
 								<input
+									id="harga-satuan-{index}"
 									type="number"
 									bind:value={harta.hargaSatuan}
 									oninput={() => updateNilaiTotal(harta)}
@@ -203,8 +206,9 @@
 
 							<!-- Jumlah -->
 							<div class="space-y-2">
-								<label class="block text-sm font-medium text-gray-700"> Jumlah </label>
+								<label for="jumlah-{index}" class="block text-sm font-medium text-gray-700"> Jumlah </label>
 								<input
+									id="jumlah-{index}"
 									type="number"
 									bind:value={harta.jumlah}
 									oninput={() => updateNilaiTotal(harta)}
@@ -217,8 +221,9 @@
 						{:else}
 							<!-- Nilai Total (untuk input langsung) -->
 							<div class="space-y-2 md:col-span-2">
-								<label class="block text-sm font-medium text-gray-700"> Nilai Total (Rp) </label>
+								<label for="nilai-total-{index}" class="block text-sm font-medium text-gray-700"> Nilai Total (Rp) </label>
 								<input
+									id="nilai-total-{index}"
 									type="number"
 									bind:value={harta.nilaiTotal}
 									placeholder="10000000"
@@ -302,13 +307,13 @@
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 						<div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
 							<div class="text-blue-600 text-sm font-medium">Total Harta</div>
-							<div class="text-2xl font-bold text-gray-800 mt-1">
+							<div id="total-harta-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.totalHarta)}
 							</div>
 						</div>
 						<div class="bg-yellow-50 p-6 rounded-xl border border-yellow-100">
 							<div class="text-yellow-600 text-sm font-medium">Nisab (85 gram emas)</div>
-							<div class="text-2xl font-bold text-gray-800 mt-1">
+							<div id="nisab-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.nisab)}
 							</div>
 						</div>
@@ -320,7 +325,7 @@
 							>
 								Status Zakat
 							</div>
-							<div class="text-2xl font-bold text-gray-800 mt-1">
+							<div id="status-zakat" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{hasil.mencapaiNisab ? 'Wajib' : 'Belum Wajib'}
 							</div>
 						</div>
@@ -333,7 +338,7 @@
 									<div class="text-green-600 text-sm font-medium">
 										Jumlah Zakat yang Wajib Dibayar (2,5%)
 									</div>
-									<div class="text-3xl font-bold text-green-700 mt-1">
+									<div id="jumlah-zakat-amount" class="text-3xl font-bold text-green-700 mt-1">
 										{formatRupiah(hasil.jumlahZakat)}
 									</div>
 								</div>

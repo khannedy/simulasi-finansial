@@ -125,6 +125,41 @@
 				</div>
 			</a>
 
+			<!-- Investasi Berkala Card -->
+			<a
+				href="/investasi-berkala"
+				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
+			>
+				<div
+					class="flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-xl mb-6 group-hover:bg-emerald-200 transition-colors"
+				>
+					<svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+						></path>
+					</svg>
+				</div>
+				<h2 class="text-2xl font-bold text-gray-800 mb-3">Investasi Berkala</h2>
+				<p class="text-gray-600 mb-4">
+					Simulasi pertumbuhan dana dari investasi rutin bulanan dengan compound interest
+				</p>
+				<div class="flex items-center text-emerald-600 font-semibold group-hover:text-emerald-700">
+					Mulai Simulasi
+					<svg
+						class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"
+						></path>
+					</svg>
+				</div>
+			</a>
+
 			<!-- Placeholder untuk simulasi lainnya -->
 			<div class="bg-white rounded-2xl shadow-lg p-8 opacity-50">
 				<div class="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-xl mb-6">
@@ -140,6 +175,31 @@
 				<h2 class="text-2xl font-bold text-gray-400 mb-3">Simulasi Saham</h2>
 				<p class="text-gray-400 mb-4">
 					Segera hadir - Simulasi return investasi saham dan analisis portofolio
+				</p>
+				<div class="text-gray-400 font-semibold">Coming Soon</div>
+			</div>
+
+			<!-- Placeholder untuk simulasi lainnya -->
+			<div class="bg-white rounded-2xl shadow-lg p-8 opacity-50">
+				<div class="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-xl mb-6">
+					<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+						></path>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+						></path>
+					</svg>
+				</div>
+				<h2 class="text-2xl font-bold text-gray-400 mb-3">Properti</h2>
+				<p class="text-gray-400 mb-4">
+					Segera hadir - Simulasi investasi properti dan analisis ROI
 				</p>
 				<div class="text-gray-400 font-semibold">Coming Soon</div>
 			</div>

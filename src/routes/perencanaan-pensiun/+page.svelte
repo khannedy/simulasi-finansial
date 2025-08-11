@@ -380,10 +380,10 @@
 				</div>
 
 				<div class="md:col-span-3 space-y-4">
-					<div class="space-y-2">
-						<label class="block text-sm font-medium text-gray-700">
+					<fieldset class="space-y-2">
+						<legend class="block text-sm font-medium text-gray-700">
 							Tipe Simulasi
-						</label>
+						</legend>
 						<div class="flex gap-4">
 							<label class="flex items-center">
 								<input
@@ -407,7 +407,7 @@
 						<p class="text-xs text-gray-500">
 							Pilih strategi: dana habis di akhir vs modal tetap selamanya
 						</p>
-					</div>
+					</fieldset>
 				</div>
 
 				<div class="md:col-span-3 flex gap-4 justify-center">
@@ -470,28 +470,28 @@
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 							<div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
 								<div class="text-purple-600 text-sm font-medium">Total Dana Diperlukan</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="total-dana-diperlukan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.totalDanaDiperlukan)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">Dana + Estimasi Zakat</div>
 							</div>
 							<div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
 								<div class="text-blue-600 text-sm font-medium">Dana Pensiun Murni</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="dana-pensiun-murni-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.danaDiperlukanTanpaZakat || 0)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">Tanpa zakat</div>
 							</div>
 							<div class="bg-orange-50 p-6 rounded-xl border border-orange-100">
 								<div class="text-orange-600 text-sm font-medium">Total Zakat</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="total-zakat-pensiun-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.totalZakatSelamaPensiun)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">Selama {hasil.inputData.durasiPensiun} tahun</div>
 							</div>
 							<div class="bg-green-50 p-6 rounded-xl border border-green-100">
 								<div class="text-green-600 text-sm font-medium">Rata-rata Zakat/Tahun</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="rata-zakat-tahunan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.rataRataZakatTahunan)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">2.5% dari harta</div>
@@ -502,28 +502,28 @@
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 							<div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
 								<div class="text-purple-600 text-sm font-medium">Modal Diperlukan</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="modal-diperlukan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.modalDiperlukan || hasil.perhitungan.totalDanaDiperlukan)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">Modal tetap selamanya</div>
 							</div>
 							<div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
 								<div class="text-blue-600 text-sm font-medium">Bunga Tahunan</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="bunga-tahunan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.bungaRataRataTahunan || 0)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">Return per tahun</div>
 							</div>
 							<div class="bg-orange-50 p-6 rounded-xl border border-orange-100">
 								<div class="text-orange-600 text-sm font-medium">Total Zakat</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="total-zakat-modal-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.totalZakatSelamaPensiun)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">Selama {hasil.inputData.durasiPensiun} tahun</div>
 							</div>
 							<div class="bg-green-50 p-6 rounded-xl border border-green-100">
 								<div class="text-green-600 text-sm font-medium">Rata-rata Zakat/Tahun</div>
-								<div class="text-2xl font-bold text-gray-800 mt-1">
+								<div id="rata-zakat-modal-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.rataRataZakatTahunan)}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">2.5% dari harta</div>
