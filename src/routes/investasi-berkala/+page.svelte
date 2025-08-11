@@ -3,7 +3,12 @@
 	let investasiBulanan = $state(0);
 	let jangkaWaktu = $state(0);
 	let bungaTahunan = $state(0);
+	let zakatEnabled = $state(true); // Default zakat enabled
 	let hasil = $state(null);
+
+	// Konstanta zakat
+	const TARIF_ZAKAT = 0.025; // 2.5%
+	const NISAB = 85000000; // 85 juta
 
 	function hitungSimulasi() {
 		if (investasiBulanan <= 0 || jangkaWaktu <= 0 || bungaTahunan <= 0) {
@@ -14,11 +19,15 @@
 		const bungaBulanan = bungaTahunan / 100 / 12;
 		const totalBulan = jangkaWaktu * 12;
 		
-		// Generate data per bulan dengan compound interest
+		// Generate data per bulan dengan compound interest dan zakat
 		const detailBulanan = [];
 		let saldoAkumulatif = danaSaatIni || 0; // Mulai dari dana saat ini
 		let totalInvestasi = danaSaatIni || 0; // Total investasi termasuk dana awal
 		let totalBunga = 0;
+		let totalZakat = 0;
+		
+		// Array untuk menyimpan dana per bulan untuk perhitungan zakat 1 tahun kemudian
+		const danaMengendap = [];
 
 		for (let i = 1; i <= totalBulan; i++) {
 			// Tambahkan investasi bulanan
@@ -30,13 +39,40 @@
 			saldoAkumulatif += bungaBulanIni;
 			totalBunga += bungaBulanIni;
 			
+			// Simpan dana yang mengendap untuk perhitungan zakat 1 tahun kemudian
+			danaMengendap.push(saldoAkumulatif);
+			
+			// Hitung zakat jika sudah 1 tahun (bulan ke-13 dst) dan zakat enabled
+			let zakatBulanIni = 0;
+			let kenaZakat = false;
+			let danaMengendap1Tahun = 0;
+			
+			if (zakatEnabled && i > 12) {
+				// Ambil dana yang sudah mengendap 1 tahun (12 bulan sebelumnya)
+				danaMengendap1Tahun = danaMengendap[i - 13]; // index dimulai dari 0
+				
+				if (danaMengendap1Tahun >= NISAB) {
+					zakatBulanIni = danaMengendap1Tahun * TARIF_ZAKAT / 12; // Zakat tahunan dibagi 12 bulan
+					saldoAkumulatif -= zakatBulanIni;
+					totalZakat += zakatBulanIni;
+					kenaZakat = true;
+				}
+			} else if (zakatEnabled && i <= 12) {
+				// Untuk bulan 1-12, simpan referensi untuk digunakan sebagai danaMengendap1Tahun
+				danaMengendap1Tahun = 0;
+			}
+			
 			detailBulanan.push({
 				bulan: i,
 				investasiBulanan: investasiBulanan,
 				bungaBulanIni: bungaBulanIni,
+				zakatBulanIni: zakatBulanIni,
+				kenaZakat: kenaZakat,
+				danaMengendap1Tahun: danaMengendap1Tahun,
 				saldoAkumulatif: saldoAkumulatif,
 				totalInvestasi: totalInvestasi,
-				totalBunga: totalBunga
+				totalBunga: totalBunga,
+				totalZakat: totalZakat
 			});
 		}
 
@@ -47,8 +83,10 @@
 				totalInvestasiBulanan: investasiBulanan * totalBulan,
 				totalInvestasi,
 				totalBunga,
+				totalZakat,
 				totalDana: saldoAkumulatif,
-				keuntungan: saldoAkumulatif - totalInvestasi
+				keuntungan: saldoAkumulatif - totalInvestasi,
+				rataRataZakatTahunan: totalZakat / jangkaWaktu
 			}
 		};
 	}
@@ -67,13 +105,14 @@
 		investasiBulanan = 0;
 		jangkaWaktu = 0;
 		bungaTahunan = 0;
+		zakatEnabled = true;
 		hasil = null;
 	}
 </script>
 
 <svelte:head>
 	<title>Simulasi Investasi Berkala - Simulasi Finansial</title>
-	<meta name="description" content="Simulasi investasi berkala dengan compound interest bulanan" />
+	<meta name="description" content="Simulasi investasi berkala dengan compound interest bulanan dan perhitungan zakat 2,5%" />
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 py-8 px-4">
@@ -82,7 +121,7 @@
 		<div class="text-center mb-8">
 			<h1 class="text-4xl font-bold text-gray-800 mb-2">Simulasi Investasi Berkala</h1>
 			<p class="text-gray-600 text-lg">
-				Simulasi pertumbuhan dana dari investasi rutin bulanan dengan compound interest
+				Simulasi pertumbuhan dana dari investasi rutin bulanan dengan compound interest dan perhitungan zakat 2,5%
 			</p>
 		</div>
 
@@ -171,6 +210,26 @@
 					/>
 				</div>
 
+				<!-- Zakat Toggle -->
+				<div class="lg:col-span-4 md:col-span-2">
+					<div class="flex justify-center">
+						<div class="flex items-center space-x-3">
+							<input
+								id="zakat-toggle"
+								type="checkbox"
+								bind:checked={zakatEnabled}
+								class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+							/>
+							<label for="zakat-toggle" class="text-sm font-medium text-gray-700 flex items-center">
+								<svg class="w-4 h-4 mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+								</svg>
+								Aktifkan Zakat (2,5% dari dana yang mengendap 1 tahun)
+							</label>
+						</div>
+					</div>
+				</div>
+
 				<div class="lg:col-span-4 md:col-span-2 flex gap-4 justify-center">
 					<button
 						type="submit"
@@ -219,7 +278,7 @@
 						Ringkasan Investasi
 					</h2>
 
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-{zakatEnabled ? '6' : '5'} gap-6">
 						<div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
 							<div class="text-gray-600 text-sm font-medium">Dana Awal</div>
 							<div id="dana-awal-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
@@ -238,11 +297,21 @@
 								{formatRupiah(hasil.summary.totalBunga)}
 							</div>
 						</div>
+						{#if zakatEnabled}
+							<div class="bg-orange-50 p-6 rounded-xl border border-orange-100">
+								<div class="text-orange-600 text-sm font-medium">Total Zakat</div>
+								<div id="total-zakat-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
+									{formatRupiah(hasil.summary.totalZakat)}
+								</div>
+								<div class="text-xs text-gray-500 mt-1">Dana mengendap ≥ 1 tahun</div>
+							</div>
+						{/if}
 						<div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
 							<div class="text-purple-600 text-sm font-medium">Total Dana</div>
 							<div id="total-dana-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.summary.totalDana)}
 							</div>
+							<div class="text-xs text-gray-500 mt-1">{zakatEnabled ? 'Setelah zakat' : 'Sebelum zakat'}</div>
 						</div>
 						<div class="bg-emerald-50 p-6 rounded-xl border border-emerald-100">
 							<div class="text-emerald-600 text-sm font-medium">Keuntungan</div>
@@ -294,6 +363,23 @@
 									>
 										Bunga Bulan Ini
 									</th>
+									{#if zakatEnabled}
+										<th
+											class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+										>
+											Dana Mengendap 1 Tahun
+										</th>
+										<th
+											class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+										>
+											Zakat Bulan Ini
+										</th>
+										<th
+											class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+										>
+											Status Zakat
+										</th>
+									{/if}
 									<th
 										class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
 									>
@@ -318,6 +404,29 @@
 										<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-green-600">
 											{formatRupiah(item.bungaBulanIni)}
 										</td>
+										{#if zakatEnabled}
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">
+												{item.bulan > 12 ? formatRupiah(item.danaMengendap1Tahun) : '-'}
+											</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-orange-600">
+												{formatRupiah(item.zakatBulanIni)}
+											</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+												{#if item.bulan <= 12}
+													<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+														Belum 1 Tahun
+													</span>
+												{:else if item.kenaZakat}
+													<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+														Wajib
+													</span>
+												{:else}
+													<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+														Tidak Wajib
+													</span>
+												{/if}
+											</td>
+										{/if}
 										<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-blue-600">
 											{formatRupiah(item.totalInvestasi)}
 										</td>
@@ -354,8 +463,12 @@
 				</li>
 				<li>• Investasi dilakukan di awal bulan, bunga dihitung dari saldo yang sudah ada</li>
 				<li>• Bunga yang diperoleh langsung ditambahkan ke investasi (compound effect)</li>
+				<li>• Zakat 2,5% dihitung dari dana yang sudah mengendap selama 1 tahun (mulai bulan ke-13)</li>
+				<li>• Zakat hanya wajib jika dana mengendap mencapai nisab (85 juta rupiah)</li>
+				<li>• Zakat dapat diaktifkan/dinonaktifkan sesuai kebutuhan simulasi</li>
 				<li>• Hasil simulasi bersifat ilustratif dan tidak termasuk biaya transaksi atau pajak</li>
 				<li>• Asumsi return konsisten setiap bulan, kondisi pasar sebenarnya dapat berfluktuasi</li>
+				<li>• Konsultasikan dengan ustadz/kyai untuk perhitungan zakat yang lebih akurat</li>
 			</ul>
 		</div>
 	</div>
