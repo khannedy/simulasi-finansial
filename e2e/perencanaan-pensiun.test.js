@@ -21,6 +21,11 @@ test.describe('Halaman Perencanaan Pensiun', () => {
 		await expect(page.getByText('Durasi Pensiun (Tahun)')).toBeVisible();
 		await expect(page.getByText('Tingkat Suku Bunga (% per tahun)')).toBeVisible();
 
+		// Check zakat toggle
+		await expect(page.locator('#zakat-toggle')).toBeVisible();
+		await expect(page.getByText('Aktifkan Zakat (2,5% per tahun dari harta)')).toBeVisible();
+		await expect(page.locator('#zakat-toggle')).toBeChecked(); // Default should be checked
+
 		// Check buttons
 		await expect(page.getByRole('button', { name: 'Hitung Perencanaan' })).toBeVisible();
 		await expect(page.getByRole('button', { name: 'Reset' })).toBeVisible();
@@ -236,6 +241,7 @@ test.describe('Halaman Perencanaan Pensiun', () => {
 
 		await expect(page.getByText('Catatan Penting')).toBeVisible();
 		await expect(page.getByText('Simulasi ini menggunakan metode iteratif dengan asumsi suku bunga tetap')).toBeVisible();
+		await expect(page.getByText('Zakat dapat diaktifkan/dinonaktifkan sesuai kebutuhan simulasi')).toBeVisible();
 		await expect(page.getByText('Zakat 2.5% dihitung dari total harta (sisa dana) yang dimiliki')).toBeVisible();
 		await expect(page.getByText('Zakat hanya wajib jika total harta mencapai nisab (85 juta rupiah')).toBeVisible();
 		await expect(page.getByText('Dana dihitung agar dapat bertahan hingga akhir periode tanpa deficit')).toBeVisible();
@@ -325,7 +331,7 @@ test.describe('Halaman Perencanaan Pensiun', () => {
 		await expect(page.getByRole('heading', { name: 'Ringkasan Perencanaan Dana Pensiun' })).toBeVisible({ timeout: 5000 });
 
 		// Check if type badge is displayed (use more specific locator to avoid radio button)
-		await expect(page.locator('.bg-purple-100', { hasText: 'Modal Tetap (Hidup dari Bunga)' })).toBeVisible();
+		await expect(page.locator('span.bg-purple-100').filter({ hasText: 'Modal Tetap (Hidup dari Bunga)' })).toBeVisible();
 
 		// Check summary cards for modal tetap
 		await expect(page.getByText('Modal Diperlukan')).toBeVisible();
@@ -365,7 +371,7 @@ test.describe('Halaman Perencanaan Pensiun', () => {
 		}, { timeout: 10000 });
 
 		// Check dana habis type (use more specific locator to avoid radio button)
-		await expect(page.locator('.bg-purple-100', { hasText: 'Dana Habis di Akhir Periode' })).toBeVisible();
+		await expect(page.locator('span.bg-purple-100', { hasText: 'Dana Habis di Akhir Periode' })).toBeVisible();
 		await expect(page.locator('th:has-text("Sisa Dana Awal")')).toBeVisible();
 
 		// Switch to Modal Tetap
@@ -416,10 +422,121 @@ test.describe('Halaman Perencanaan Pensiun', () => {
 		await page.getByRole('button', { name: 'Hitung Perencanaan' }).click();
 
 		await page.waitForFunction(() => {
-			return document.querySelector('.bg-purple-100') && 
-			       document.querySelector('.bg-purple-100').textContent.includes('Modal Tetap');
+			return document.querySelector('span.bg-purple-100') && 
+			       document.querySelector('span.bg-purple-100').textContent.includes('Modal Tetap');
 		}, { timeout: 10000 });
 
+		await expect(page.locator('span.bg-purple-100', { hasText: 'Modal Tetap (Hidup dari Bunga)' })).toBeVisible();
+	});
+
+	test('simulasi dengan zakat enabled menampilkan informasi zakat', async ({ page }) => {
+		// Fill form with valid data and ensure zakat is enabled
+		await page.locator('#target-dana').fill('100000000'); // 100 juta per tahun
+		await page.locator('#durasi').fill('10'); // 10 tahun
+		await page.locator('#suku-bunga').fill('7'); // 7%
+		
+		// Ensure zakat toggle is checked (should be by default)
+		await expect(page.locator('#zakat-toggle')).toBeChecked();
+		await page.locator('input[value="habis"]').check();
+
+		await page.getByRole('button', { name: 'Hitung Perencanaan' }).click();
+
+		// Wait for results
+		await expect(page.getByText('Ringkasan Perencanaan Dana Pensiun')).toBeVisible({ timeout: 10000 });
+
+		// Check that zakat-related cards are visible
+		await expect(page.locator('#total-zakat-pensiun-amount')).toBeVisible();
+		await expect(page.locator('#rata-zakat-tahunan-amount')).toBeVisible();
+		await expect(page.locator('#dana-pensiun-murni-amount')).toBeVisible();
+
+		// Check table headers include zakat columns
+		await expect(page.locator('th:has-text("Zakat Dibayar")')).toBeVisible();
+		await expect(page.locator('th:has-text("Status Zakat")')).toBeVisible();
+
+		// Check some table cells have zakat information - use more specific locator
+		await expect(page.locator('td .bg-green-100').first()).toContainText('Wajib');
+	});
+
+	test('simulasi dengan zakat disabled menyembunyikan informasi zakat', async ({ page }) => {
+		// Fill form with valid data and disable zakat
+		await page.locator('#target-dana').fill('100000000'); // 100 juta per tahun
+		await page.locator('#durasi').fill('10'); // 10 tahun
+		await page.locator('#suku-bunga').fill('7'); // 7%
+		
+		// Disable zakat toggle
+		await page.locator('#zakat-toggle').uncheck();
+		await expect(page.locator('#zakat-toggle')).not.toBeChecked();
+		await page.locator('input[value="habis"]').check();
+
+		await page.getByRole('button', { name: 'Hitung Perencanaan' }).click();
+
+		// Wait for results
+		await expect(page.getByText('Ringkasan Perencanaan Dana Pensiun')).toBeVisible({ timeout: 10000 });
+
+		// Check that zakat-related cards are NOT visible
+		await expect(page.locator('#total-zakat-pensiun-amount')).not.toBeVisible();
+		await expect(page.locator('#rata-zakat-tahunan-amount')).not.toBeVisible();
+		await expect(page.locator('#dana-pensiun-murni-amount')).not.toBeVisible();
+
+		// Check table headers do NOT include zakat columns
+		await expect(page.locator('th:has-text("Zakat Dibayar")')).not.toBeVisible();
+		await expect(page.locator('th:has-text("Status Zakat")')).not.toBeVisible();
+
+		// Subtitle should show "Dana tanpa zakat"
+		await expect(page.getByText('Dana tanpa zakat')).toBeVisible();
+	});
+
+	test('simulasi modal tetap dengan zakat toggle berfungsi dengan benar', async ({ page }) => {
+		// Fill form for modal tetap simulation
+		await page.locator('#target-dana').fill('200000000'); // 200 juta per tahun
+		await page.locator('#durasi').fill('15'); // 15 tahun
+		await page.locator('#suku-bunga').fill('6'); // 6%
+		
+		// Test with zakat enabled first
+		await expect(page.locator('#zakat-toggle')).toBeChecked();
+		await page.locator('input[value="modal-tetap"]').check();
+
+		await page.getByRole('button', { name: 'Hitung Perencanaan' }).click();
+
+		// Wait for results
+		await expect(page.getByText('Ringkasan Perencanaan Dana Pensiun')).toBeVisible({ timeout: 10000 });
+
+		// Check modal tetap specific zakat cards are visible
+		await expect(page.locator('#total-zakat-modal-amount')).toBeVisible();
+		await expect(page.locator('#rata-zakat-modal-amount')).toBeVisible();
+		
+		// Check modal tetap badge
 		await expect(page.locator('.bg-purple-100', { hasText: 'Modal Tetap (Hidup dari Bunga)' })).toBeVisible();
 	});
+
+	test('reset form menyertakan zakat toggle', async ({ page }) => {
+		// Fill form with data and disable zakat
+		await page.locator('#target-dana').fill('50000000');
+		await page.locator('#durasi').fill('25');
+		await page.locator('#suku-bunga').fill('8');
+		await page.locator('#zakat-toggle').uncheck();
+		await page.locator('input[value="modal-tetap"]').check();
+
+		// Verify values are set
+		await expect(page.locator('#target-dana')).toHaveValue('50000000');
+		await expect(page.locator('#zakat-toggle')).not.toBeChecked();
+
+		// Submit to show results
+		await page.getByRole('button', { name: 'Hitung Perencanaan' }).click();
+		await expect(page.getByText('Ringkasan Perencanaan Dana Pensiun')).toBeVisible({ timeout: 10000 });
+
+		// Reset form
+		await page.getByRole('button', { name: 'Reset' }).click();
+
+		// Check that zakat toggle is reset to checked (default)
+		await expect(page.locator('#target-dana')).toHaveValue('0');
+		await expect(page.locator('#durasi')).toHaveValue('0');
+		await expect(page.locator('#suku-bunga')).toHaveValue('6');
+		await expect(page.locator('#zakat-toggle')).toBeChecked(); // Should be back to default (checked)
+		await expect(page.locator('input[value="habis"]')).toBeChecked(); // Should be back to default
+
+		// Results should be hidden
+		await expect(page.getByText('Ringkasan Perencanaan Dana Pensiun')).not.toBeVisible();
+	});
 });
+
