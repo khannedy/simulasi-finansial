@@ -2,6 +2,7 @@
 	let saldoObligasi = $state(0);
 	let bungaObligasi = $state(0);
 	let durasiObligasi = $state(0);
+	let zakatEnabled = $state(false);
 	let hasil = $state(null);
 
 	function hitungSimulasi() {
@@ -16,21 +17,39 @@
 		const kuponBersih = kuponBulanan - pajakObligasi;
 		const totalBulan = durasiObligasi * 12;
 
+		// Track running total for zakat calculation
+		let runningTotal = saldoObligasi;
+		let totalZakat = 0;
+
 		// Generate data per bulan
 		const detailBulanan = [];
 		for (let i = 1; i <= totalBulan; i++) {
+			// Add monthly kupon to running total
+			runningTotal += kuponBersih;
+			
+			// Calculate zakat for bulan ke-12 every year (if enabled)
+			let zakatBulanIni = 0;
+			if (zakatEnabled && i % 12 === 0) {
+				zakatBulanIni = runningTotal * 0.025; // 2.5% zakat
+				runningTotal -= zakatBulanIni;
+				totalZakat += zakatBulanIni;
+			}
+
 			detailBulanan.push({
 				bulan: i,
 				kuponKotor: kuponBulanan,
 				pajak: pajakObligasi,
-				kuponBersih: kuponBersih
+				kuponBersih: kuponBersih,
+				zakat: zakatBulanIni,
+				totalDana: runningTotal
 			});
 		}
 
 		const totalKuponKotor = kuponBulanan * totalBulan;
 		const totalPajak = pajakObligasi * totalBulan;
 		const totalKuponBersih = kuponBersih * totalBulan;
-		const totalPendapatan = totalKuponBersih + saldoObligasi;
+		const totalPendapatanSebelumZakat = totalKuponBersih + saldoObligasi;
+		const totalPendapatan = totalPendapatanSebelumZakat - totalZakat;
 
 		hasil = {
 			detailBulanan,
@@ -38,8 +57,10 @@
 				totalKuponKotor,
 				totalPajak,
 				totalKuponBersih,
+				totalZakat,
 				saldoPokok: saldoObligasi,
-				totalPendapatan
+				totalPendapatan,
+				zakatEnabled
 			}
 		};
 	}
@@ -57,6 +78,7 @@
 		saldoObligasi = 0;
 		bungaObligasi = 0;
 		durasiObligasi = 0;
+		zakatEnabled = false;
 		hasil = null;
 	}
 </script>
@@ -146,6 +168,24 @@
 					/>
 				</div>
 
+				<!-- Zakat Toggle -->
+				<div class="md:col-span-3 flex justify-center mb-4">
+					<div class="flex items-center space-x-3">
+						<input
+							id="zakat-toggle"
+							type="checkbox"
+							bind:checked={zakatEnabled}
+							class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+						/>
+						<label for="zakat-toggle" class="text-sm font-medium text-gray-700 flex items-center">
+							<svg class="w-4 h-4 mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+							</svg>
+							Aktifkan Zakat (2,5% per tahun di bulan ke-12)
+						</label>
+					</div>
+				</div>
+
 				<div class="md:col-span-3 flex gap-4 justify-center">
 					<button
 						type="submit"
@@ -194,7 +234,7 @@
 						Ringkasan Investasi
 					</h2>
 
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
 						<div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
 							<div class="text-blue-600 text-sm font-medium">Total Kupon Kotor</div>
 							<div id="kupon-kotor-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
@@ -213,12 +253,20 @@
 								{formatRupiah(hasil.summary.totalKuponBersih)}
 							</div>
 						</div>
+						{#if hasil.summary.zakatEnabled}
+							<div class="bg-orange-50 p-6 rounded-xl border border-orange-100">
+								<div class="text-orange-600 text-sm font-medium">Total Zakat (2,5%)</div>
+								<div id="zakat-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
+									{formatRupiah(hasil.summary.totalZakat)}
+								</div>
+							</div>
+						{/if}
 						<div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
 							<div class="text-purple-600 text-sm font-medium">Total Pendapatan</div>
 							<div id="total-pendapatan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 								{formatRupiah(hasil.summary.totalPendapatan)}
 							</div>
-							<div class="text-xs text-gray-500 mt-1">Kupon + Pokok</div>
+							<div class="text-xs text-gray-500 mt-1">{hasil.summary.zakatEnabled ? 'Kupon + Pokok - Zakat' : 'Kupon + Pokok'}</div>
 						</div>
 					</div>
 				</div>
@@ -268,6 +316,18 @@
 									>
 										Kupon Bersih
 									</th>
+									{#if hasil.summary.zakatEnabled}
+										<th
+											class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+										>
+											Zakat (2,5%)
+										</th>
+									{/if}
+									<th
+										class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+									>
+										Total Dana
+									</th>
 								</tr>
 							</thead>
 							<tbody class="bg-white divide-y divide-gray-200">
@@ -286,6 +346,14 @@
 											class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-green-600"
 										>
 											{formatRupiah(item.kuponBersih)}
+										</td>
+										{#if hasil.summary.zakatEnabled}
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-orange-600">
+												{item.zakat > 0 ? formatRupiah(item.zakat) : '-'}
+											</td>
+										{/if}
+										<td class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-blue-600">
+											{formatRupiah(item.totalDana)}
 										</td>
 									</tr>
 								{/each}
@@ -315,6 +383,7 @@
 				</li>
 				<li>• Kupon dibayarkan setiap bulan dengan jumlah yang sama</li>
 				<li>• Total pendapatan sudah termasuk pengembalian pokok investasi</li>
+				<li>• Fitur zakat: mengurangi 2,5% dari total dana setiap bulan ke-12 (akhir tahun)</li>
 				<li>• Hasil simulasi bersifat ilustratif dan tidak termasuk biaya transaksi</li>
 			</ul>
 		</div>

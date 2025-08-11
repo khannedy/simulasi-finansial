@@ -21,6 +21,10 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		await expect(page.getByText('Bunga Obligasi (% per tahun)')).toBeVisible();
 		await expect(page.getByText('Durasi (Tahun)')).toBeVisible();
 
+		// Check zakat toggle
+		await expect(page.locator('#zakat-toggle')).toBeVisible();
+		await expect(page.getByText('Aktifkan Zakat (2,5% per tahun di bulan ke-12)')).toBeVisible();
+
 		// Check buttons
 		await expect(page.getByRole('button', { name: 'Hitung Simulasi' })).toBeVisible();
 		await expect(page.getByRole('button', { name: 'Reset' })).toBeVisible();
@@ -110,6 +114,83 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		await expect(page.locator('#total-pendapatan-amount')).toContainText('Rp 12.648.000'); // Total pendapatan
 	});
 
+	test('simulasi dengan zakat enabled berfungsi dengan benar', async ({ page }) => {
+		// Ensure clean state by waiting for page to fully load
+		await page.waitForTimeout(200);
+		
+		// Test with 2 years to see zakat deduction in action
+		await page.locator('#saldo').fill('100000000'); // 100 juta
+		await page.locator('#bunga').fill('6'); // 6% per tahun
+		await page.locator('#durasi').fill('2'); // 2 tahun
+
+		// Enable zakat
+		await page.locator('#zakat-toggle').check();
+		await expect(page.locator('#zakat-toggle')).toBeChecked();
+
+		await page.getByRole('button', { name: 'Hitung Simulasi' }).click();
+
+		// Wait for results to appear
+		await expect(page.locator('text=Ringkasan Investasi')).toBeVisible({ timeout: 5000 });
+
+		// Check if zakat card is displayed
+		await expect(page.locator('#zakat-amount')).toBeVisible();
+
+		// Check table headers include zakat column
+		await expect(page.locator('th:has-text("Zakat (2,5%)")')).toBeVisible();
+		await expect(page.locator('th:has-text("Total Dana")')).toBeVisible();
+
+		// Check if zakat is deducted at month 12 and 24
+		await expect(page.getByRole('cell', { name: 'Bulan 12', exact: true })).toBeVisible();
+		await expect(page.getByRole('cell', { name: 'Bulan 24', exact: true })).toBeVisible();
+
+		// Total pendapatan should be less when zakat is enabled
+		const totalPendapatanText = await page.locator('#total-pendapatan-amount').textContent();
+		expect(totalPendapatanText).toContain('Rp');
+		
+		// Check the subtitle shows zakat deduction
+		await expect(page.getByText('Kupon + Pokok - Zakat')).toBeVisible();
+	});
+
+	test('simulasi tanpa zakat vs dengan zakat menunjukkan perbedaan', async ({ page }) => {
+		// Test without zakat first
+		await page.locator('#saldo').fill('50000000'); // 50 juta
+		await page.locator('#bunga').fill('8'); // 8% per tahun
+		await page.locator('#durasi').fill('1'); // 1 tahun
+
+		await page.getByRole('button', { name: 'Hitung Simulasi' }).click();
+		await expect(page.locator('text=Ringkasan Investasi')).toBeVisible({ timeout: 5000 });
+
+		// Without zakat - no zakat card should be visible
+		await expect(page.locator('#zakat-amount')).not.toBeVisible();
+		await expect(page.locator('th:has-text("Zakat (2,5%)")')).not.toBeVisible();
+		await expect(page.getByText('Kupon + Pokok')).toBeVisible();
+
+		// Get total pendapatan without zakat
+		const pendapatanTanpaZakat = await page.locator('#total-pendapatan-amount').textContent();
+
+		// Reset and test with zakat
+		await page.getByRole('button', { name: 'Reset' }).click();
+		
+		await page.locator('#saldo').fill('50000000'); // 50 juta
+		await page.locator('#bunga').fill('8'); // 8% per tahun  
+		await page.locator('#durasi').fill('1'); // 1 tahun
+		await page.locator('#zakat-toggle').check();
+
+		await page.getByRole('button', { name: 'Hitung Simulasi' }).click();
+		await expect(page.locator('text=Ringkasan Investasi')).toBeVisible({ timeout: 5000 });
+
+		// With zakat - zakat card should be visible
+		await expect(page.locator('#zakat-amount')).toBeVisible();
+		await expect(page.locator('th:has-text("Zakat (2,5%)")')).toBeVisible();
+		await expect(page.getByText('Kupon + Pokok - Zakat')).toBeVisible();
+
+		// Get total pendapatan with zakat
+		const pendapatanDenganZakat = await page.locator('#total-pendapatan-amount').textContent();
+
+		// They should be different (pendapatan dengan zakat should be less)
+		expect(pendapatanDenganZakat).not.toBe(pendapatanTanpaZakat);
+	});
+
 	test('tombol reset berfungsi dengan benar', async ({ page }) => {
 		// Ensure form is rendered
 		await expect(page.locator('#saldo')).toBeVisible({ timeout: 10000 });
@@ -123,11 +204,15 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		await page.locator('#bunga').fill('7');
 		await page.locator('#durasi').clear();
 		await page.locator('#durasi').fill('3');
+		
+		// Enable zakat toggle
+		await page.locator('#zakat-toggle').check();
 
 		// Ensure values are actually set before submitting (avoids flakiness)
 		await expect(page.locator('#saldo')).toHaveValue('5000000');
 		await expect(page.locator('#bunga')).toHaveValue('7');
 		await expect(page.locator('#durasi')).toHaveValue('3');
+		await expect(page.locator('#zakat-toggle')).toBeChecked();
 
 		// Submit to show results with robust click handling
 		const submitBtn = page.getByRole('button', { name: 'Hitung Simulasi' });
@@ -154,6 +239,7 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		await expect(page.locator('#saldo')).toHaveValue('0');
 		await expect(page.locator('#bunga')).toHaveValue('0');
 		await expect(page.locator('#durasi')).toHaveValue('0');
+		await expect(page.locator('#zakat-toggle')).not.toBeChecked();
 
 		// Check if results are hidden
 		await expect(page.getByText('Ringkasan Investasi')).not.toBeVisible();
@@ -221,6 +307,9 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		).toBeVisible();
 		await expect(
 			page.getByText('Total pendapatan sudah termasuk pengembalian pokok investasi')
+		).toBeVisible();
+		await expect(
+			page.getByText('Fitur zakat: mengurangi 2,5% dari total dana setiap bulan ke-12')
 		).toBeVisible();
 		await expect(page.getByText('Hasil simulasi bersifat ilustratif')).toBeVisible();
 	});
