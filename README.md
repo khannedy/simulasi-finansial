@@ -35,6 +35,14 @@ Kalkulator pertumbuhan investasi bulanan reguler dengan bunga majemuk.
 - Tracking detail per bulan
 - Ringkasan visual dengan 5 metrik kunci
 
+### 5. Simulasi KPR (Kredit Pemilikan Rumah)
+Kalkulator cicilan KPR dengan metode anuitas.
+- Input: Harga rumah, down payment (%), lama cicilan (tahun), suku bunga (% per tahun)
+- Perhitungan: Cicilan bulanan dengan metode anuitas (cicilan tetap)
+- Output: Breakdown cicilan pokok dan bunga per bulan sampai lunas
+- Ringkasan: Total pembayaran, total bunga, jumlah pinjaman
+- Simulasi lengkap dari bulan pertama hingga lunas
+
 ### Coming Soon
 - Simulasi Saham (Stock Investment)
 - Properti (Real Estate Investment)
@@ -124,7 +132,8 @@ simulasi-finansial/
 │   │   ├── obligasi/               # Simulasi Obligasi
 │   │   ├── zakat-mal/              # Kalkulator Zakat Mal
 │   │   ├── perencanaan-pensiun/    # Perencanaan Pensiun
-│   │   └── investasi-berkala/      # Investasi Berkala
+│   │   ├── investasi-berkala/      # Investasi Berkala
+│   │   └── simulasi-kpr/           # Simulasi KPR
 │   ├── lib/                        # Shared libraries
 │   ├── app.html                    # HTML template
 │   └── app.css                     # Global styles (Tailwind)
@@ -132,7 +141,8 @@ simulasi-finansial/
 │   ├── investasi-berkala.test.js
 │   ├── zakat-mal.test.js
 │   ├── obligasi.test.js
-│   └── perencanaan-pensiun.test.js
+│   ├── perencanaan-pensiun.test.js
+│   └── simulasi-kpr.test.js
 ├── svelte.config.js                # SvelteKit configuration
 ├── vite.config.js                  # Vite configuration
 ├── tailwind.config.js              # Tailwind CSS configuration
