@@ -1,12 +1,12 @@
 <script>
-	let hargaRumah = $state(0);
+	let hargaKendaraan = $state(0);
 	let dp = $state(20); // Default 20%
 	let lamaCicilan = $state(0);
 	let sukuBunga = $state(0);
 	let hasil = $state(null);
 
-	function hitungKPR() {
-		if (hargaRumah <= 0 || lamaCicilan <= 0 || sukuBunga <= 0) {
+	function hitungKKB() {
+		if (hargaKendaraan <= 0 || lamaCicilan <= 0 || sukuBunga <= 0) {
 			alert('Mohon isi semua field dengan nilai yang valid!');
 			return;
 		}
@@ -17,8 +17,8 @@
 		}
 
 		// Perhitungan dasar
-		const jumlahDP = hargaRumah * (dp / 100);
-		const jumlahPinjaman = hargaRumah - jumlahDP;
+		const jumlahDP = hargaKendaraan * (dp / 100);
+		const jumlahPinjaman = hargaKendaraan - jumlahDP;
 		const bungaPerBulan = sukuBunga / 100 / 12;
 		const totalBulan = lamaCicilan * 12;
 
@@ -57,7 +57,7 @@
 		hasil = {
 			detailBulanan,
 			summary: {
-				hargaRumah,
+				hargaKendaraan,
 				jumlahDP,
 				persenDP: dp,
 				jumlahPinjaman,
@@ -71,7 +71,7 @@
 	}
 
 	function resetForm() {
-		hargaRumah = 0;
+		hargaKendaraan = 0;
 		dp = 20;
 		lamaCicilan = 0;
 		sukuBunga = 0;
@@ -89,20 +89,20 @@
 </script>
 
 <svelte:head>
-	<title>Simulasi KPR - Simulasi Finansial</title>
+	<title>Simulasi KKB - Simulasi Finansial</title>
 	<meta
 		name="description"
-		content="Simulasi kredit pemilikan rumah dengan perhitungan cicilan bulanan menggunakan metode anuitas"
+		content="Simulasi kredit kendaraan bermotor (mobil/motor) dengan perhitungan cicilan bulanan menggunakan metode anuitas"
 	/>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 py-8 px-4">
+<div class="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 py-8 px-4">
 	<div class="max-w-6xl mx-auto">
 		<!-- Back to Home Button -->
 		<div class="mb-6">
 			<a
 				href="/"
-				class="inline-flex items-center text-gray-700 hover:text-indigo-600 transition-colors duration-200 group"
+				class="inline-flex items-center text-gray-700 hover:text-teal-600 transition-colors duration-200 group"
 			>
 				<svg
 					class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-200"
@@ -123,9 +123,9 @@
 
 		<!-- Header -->
 		<div class="text-center mb-8">
-			<h1 class="text-4xl font-bold text-gray-800 mb-2">Simulasi KPR</h1>
+			<h1 class="text-4xl font-bold text-gray-800 mb-2">Simulasi KKB</h1>
 			<p class="text-gray-600 text-lg">
-				Hitung cicilan bulanan KPR (Kredit Pemilikan Rumah) dengan metode anuitas
+				Hitung cicilan bulanan KKB (Kredit Kendaraan Bermotor) untuk mobil atau motor dengan metode anuitas
 			</p>
 		</div>
 
@@ -133,7 +133,7 @@
 		<div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
 			<h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
 				<svg
-					class="w-6 h-6 mr-2 text-indigo-600"
+					class="w-6 h-6 mr-2 text-teal-600"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -142,29 +142,29 @@
 						stroke-linecap="round"
 						stroke-linejoin="round"
 						stroke-width="2"
-						d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+						d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
 					></path>
 				</svg>
-				Parameter KPR
+				Parameter KKB
 			</h2>
 
 			<form
 				onsubmit={(e) => {
 					e.preventDefault();
-					hitungKPR();
+					hitungKKB();
 				}}
 				class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
 			>
 				<div class="space-y-2">
-					<label for="harga-rumah" class="block text-sm font-medium text-gray-700">
-						Harga Rumah (Rp)
+					<label for="harga-kendaraan" class="block text-sm font-medium text-gray-700">
+						Harga Kendaraan (Rp)
 					</label>
 					<input
-						id="harga-rumah"
+						id="harga-kendaraan"
 						type="number"
-						bind:value={hargaRumah}
-						placeholder="500000000"
-						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-lg"
+						bind:value={hargaKendaraan}
+						placeholder="200000000"
+						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors text-lg"
 						min="1"
 						step="any"
 						required
@@ -180,7 +180,7 @@
 						type="number"
 						bind:value={dp}
 						placeholder="20"
-						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-lg"
+						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors text-lg"
 						min="0"
 						max="100"
 						step="0.1"
@@ -196,10 +196,10 @@
 						id="lama-cicilan"
 						type="number"
 						bind:value={lamaCicilan}
-						placeholder="15"
-						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-lg"
+						placeholder="3"
+						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors text-lg"
 						min="1"
-						max="30"
+						max="7"
 						step="1"
 						required
 					/>
@@ -213,8 +213,8 @@
 						id="suku-bunga"
 						type="number"
 						bind:value={sukuBunga}
-						placeholder="9"
-						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-lg"
+						placeholder="8"
+						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors text-lg"
 						min="0.1"
 						step="0.1"
 						max="50"
@@ -225,7 +225,7 @@
 				<div class="lg:col-span-4 md:col-span-2 flex gap-4 justify-center">
 					<button
 						type="submit"
-						class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center shadow-lg hover:shadow-xl"
+						class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center shadow-lg hover:shadow-xl"
 					>
 						<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
@@ -235,7 +235,7 @@
 								d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
 							></path>
 						</svg>
-						Hitung KPR
+						Hitung KKB
 					</button>
 					<button
 						type="button"
@@ -255,7 +255,7 @@
 				<div class="bg-white rounded-2xl shadow-xl p-8">
 					<h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
 						<svg
-							class="w-6 h-6 mr-2 text-indigo-600"
+							class="w-6 h-6 mr-2 text-teal-600"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -267,17 +267,17 @@
 								d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
 							></path>
 						</svg>
-						Ringkasan KPR
+						Ringkasan KKB
 					</h2>
 
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						<div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
-							<div class="text-blue-600 text-sm font-medium">Harga Rumah</div>
+							<div class="text-blue-600 text-sm font-medium">Harga Kendaraan</div>
 							<div
-								id="harga-rumah-amount"
+								id="harga-kendaraan-amount"
 								class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight"
 							>
-								{formatRupiah(hasil.summary.hargaRumah)}
+								{formatRupiah(hasil.summary.hargaKendaraan)}
 							</div>
 						</div>
 						<div class="bg-green-50 p-6 rounded-xl border border-green-100">
@@ -310,8 +310,8 @@
 								Selama {hasil.summary.lamaCicilan} tahun ({hasil.summary.lamaCicilan * 12} bulan)
 							</div>
 						</div>
-						<div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
-							<div class="text-indigo-600 text-sm font-medium">Total Pembayaran</div>
+						<div class="bg-teal-50 p-6 rounded-xl border border-teal-100">
+							<div class="text-teal-600 text-sm font-medium">Total Pembayaran</div>
 							<div
 								id="total-pembayaran-amount"
 								class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight"
@@ -339,7 +339,7 @@
 					<div class="p-6 border-b border-gray-200">
 						<h2 class="text-2xl font-semibold text-gray-800 flex items-center">
 							<svg
-								class="w-6 h-6 mr-2 text-indigo-600"
+								class="w-6 h-6 mr-2 text-teal-600"
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
@@ -399,7 +399,7 @@
 											{formatRupiah(item.cicilanBunga)}
 										</td>
 										<td
-											class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-indigo-600"
+											class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-teal-600"
 										>
 											{formatRupiah(item.totalCicilan)}
 										</td>
@@ -433,12 +433,12 @@
 				<div class="bg-white rounded-lg p-4 space-y-2">
 					<p>
 						<span class="font-semibold">❌ Bunga Sederhana (Simple Interest):</span><br />
-						Contoh: Pinjaman 500 juta, bunga 9%/tahun, 15 tahun<br />
-						<span class="text-red-600">Total Bunga = 500.000.000 × 9% × 15 = 675.000.000</span>
+						Contoh: Pinjaman 400 juta, bunga 4%/tahun, 5 tahun<br />
+						<span class="text-red-600">Total Bunga = 400.000.000 × 4% × 5 = 80.000.000</span>
 					</p>
 					<p>
 						<span class="font-semibold">✅ Bunga Anuitas (Yang Digunakan):</span><br />
-						<span class="text-green-600">Total Bunga ≈ 408 juta (LEBIH RENDAH!)</span>
+						<span class="text-green-600">Total Bunga = 41.996.529 (LEBIH RENDAH!)</span>
 					</p>
 				</div>
 				<p class="font-medium">Kenapa lebih rendah?</p>
@@ -448,9 +448,9 @@
 						• <span class="font-semibold">Bunga dihitung dari sisa pinjaman yang terus berkurang</span
 						>
 					</li>
-					<li>• Bulan 1: Bunga dari 500 juta</li>
-					<li>• Bulan 12: Bunga dari ~495 juta (sudah berkurang!)</li>
-					<li>• Bulan 180: Bunga dari sisa yang sangat kecil</li>
+					<li>• Bulan 1: Bunga dari 400 juta</li>
+					<li>• Bulan 2: Bunga dari ~394 juta (sudah berkurang!)</li>
+					<li>• Bulan 60: Bunga dari sisa yang sangat kecil</li>
 				</ul>
 				<p class="bg-green-100 p-3 rounded border border-green-300 text-green-800">
 					💡 <span class="font-semibold">Keuntungan:</span> Metode anuitas menguntungkan peminjam karena
@@ -475,12 +475,19 @@
 			<ul class="text-yellow-700 text-sm space-y-1">
 				<li>• Perhitungan menggunakan metode anuitas (cicilan tetap setiap bulan)</li>
 				<li>
-					• Simulasi ini tidak termasuk biaya-biaya lain seperti: biaya provisi, administrasi,
-					asuransi, notaris, BPHTB, dan biaya-biaya lainnya
+					• Simulasi ini tidak termasuk biaya-biaya lain seperti: biaya administrasi, provisi,
+					asuransi (jiwa & kendaraan), biaya fidusia, dan biaya-biaya lainnya
 				</li>
 				<li>• Suku bunga yang digunakan adalah suku bunga tetap (fixed rate)</li>
-				<li>• Hasil simulasi bersifat perkiraan dan dapat berbeda dengan penawaran bank</li>
-				<li>• Pastikan untuk berkonsultasi dengan bank atau lembaga pembiayaan untuk detail yang lebih akurat</li>
+				<li>
+					• Untuk kendaraan bekas, biasanya ada batasan tahun kendaraan dan suku bunga yang lebih
+					tinggi
+				</li>
+				<li>• Hasil simulasi bersifat perkiraan dan dapat berbeda dengan penawaran leasing/bank</li>
+				<li>
+					• Pastikan untuk berkonsultasi dengan dealer atau lembaga pembiayaan untuk detail yang
+					lebih akurat
+				</li>
 			</ul>
 		</div>
 	</div>

@@ -43,9 +43,14 @@ Kalkulator cicilan KPR dengan metode anuitas.
 - Ringkasan: Total pembayaran, total bunga, jumlah pinjaman
 - Simulasi lengkap dari bulan pertama hingga lunas
 
-### Coming Soon
-- Simulasi Saham (Stock Investment)
-- Properti (Real Estate Investment)
+### 6. Simulasi KKB (Kredit Kendaraan Bermotor)
+Kalkulator cicilan kredit kendaraan dengan metode anuitas.
+- Input: Harga kendaraan, down payment (%), lama cicilan (tahun), suku bunga (% per tahun)
+- Perhitungan: Cicilan bulanan dengan metode anuitas (cicilan tetap)
+- Output: Breakdown cicilan pokok dan bunga per bulan sampai lunas
+- Ringkasan: Total pembayaran, total bunga, jumlah pinjaman
+- Simulasi lengkap dari bulan pertama hingga lunas
+- Tenor maksimal: 7 tahun
 
 ## Tech Stack
 
@@ -133,7 +138,8 @@ simulasi-finansial/
 │   │   ├── zakat-mal/              # Kalkulator Zakat Mal
 │   │   ├── perencanaan-pensiun/    # Perencanaan Pensiun
 │   │   ├── investasi-berkala/      # Investasi Berkala
-│   │   └── simulasi-kpr/           # Simulasi KPR
+│   │   ├── simulasi-kpr/           # Simulasi KPR
+│   │   └── simulasi-kkb/           # Simulasi KKB
 │   ├── lib/                        # Shared libraries
 │   ├── app.html                    # HTML template
 │   └── app.css                     # Global styles (Tailwind)
@@ -142,7 +148,8 @@ simulasi-finansial/
 │   ├── zakat-mal.test.js
 │   ├── obligasi.test.js
 │   ├── perencanaan-pensiun.test.js
-│   └── simulasi-kpr.test.js
+│   ├── simulasi-kpr.test.js
+│   └── simulasi-kkb.test.js
 ├── svelte.config.js                # SvelteKit configuration
 ├── vite.config.js                  # Vite configuration
 ├── tailwind.config.js              # Tailwind CSS configuration

@@ -68,7 +68,7 @@
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							stroke-width="2"
-							d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+							d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
 						></path>
 					</svg>
 				</div>
@@ -195,49 +195,37 @@
 				</div>
 			</a>
 
-			<!-- Placeholder untuk simulasi lainnya -->
-			<div class="bg-white rounded-2xl shadow-lg p-8 opacity-50">
-				<div class="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-xl mb-6">
-					<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<!-- Simulasi KKB Card -->
+			<a
+				href="/simulasi-kkb"
+				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
+			>
+				<div
+					class="flex items-center justify-center w-16 h-16 bg-teal-100 rounded-xl mb-6 group-hover:bg-teal-200 transition-colors"
+				>
+					<svg class="w-8 h-8 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
 						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+							d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"
 						></path>
 					</svg>
 				</div>
-				<h2 class="text-2xl font-bold text-gray-400 mb-3">Simulasi Saham</h2>
-				<p class="text-gray-400 mb-4">
-					Segera hadir - Simulasi return investasi saham dan analisis portofolio
+				<h2 class="text-2xl font-bold text-gray-800 mb-3">Simulasi KKB</h2>
+				<p class="text-gray-600 mb-4">
+					Hitung cicilan bulanan kredit kendaraan bermotor dengan berbagai skenario DP, tenor, dan suku bunga
 				</p>
-				<div class="text-gray-400 font-semibold">Coming Soon</div>
-			</div>
-
-			<!-- Placeholder untuk simulasi lainnya -->
-			<div class="bg-white rounded-2xl shadow-lg p-8 opacity-50">
-				<div class="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-xl mb-6">
-					<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-						></path>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+				<div class="flex items-center text-teal-600 font-semibold group-hover:text-teal-700">
+					Mulai Simulasi
+					<svg
+						class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"
 						></path>
 					</svg>
 				</div>
-				<h2 class="text-2xl font-bold text-gray-400 mb-3">Properti</h2>
-				<p class="text-gray-400 mb-4">
-					Segera hadir - Simulasi investasi properti dan analisis ROI
-				</p>
-				<div class="text-gray-400 font-semibold">Coming Soon</div>
-			</div>
+			</a>
 		</div>
 
 		<!-- Info Section -->
