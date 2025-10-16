@@ -8,7 +8,6 @@ Platform simulasi dan perencanaan keuangan berbasis web untuk pengguna Indonesia
 Kalkulator untuk menghitung pembayaran kupon bulanan, pajak, dan total pendapatan dari investasi obligasi.
 - Input: Saldo obligasi, tingkat bunga tahunan, durasi investasi
 - Perhitungan: Kupon bulanan bruto, pajak 10%, kupon bersih
-- Opsional: Perhitungan Zakat 2.5% tahunan
 - Output: Tabel per bulan dan ringkasan kartu
 
 ### 2. Kalkulator Zakat Mal
