@@ -52,6 +52,15 @@ Kalkulator cicilan kredit kendaraan dengan metode anuitas.
 - Simulasi lengkap dari bulan pertama hingga lunas
 - Tenor maksimal: 7 tahun
 
+### 7. Investasi Properti
+Kalkulator investasi properti untuk disewakan dengan tracking capital gain dan rental income.
+- Input: Harga properti, kenaikan harga per tahun (%), harga sewa per tahun, durasi simulasi (tahun)
+- Perhitungan: Compound growth untuk nilai properti, akumulasi pendapatan sewa
+- Output: Tabel per tahun dengan breakdown nilai properti, capital gain, dan total sewa
+- Ringkasan: 6 metrik kunci (harga beli, nilai akhir, total capital gain, total sewa, total keuntungan, ROI)
+- Edukasi: Penjelasan perbedaan capital gain (apresiasi) vs rental income (pasif)
+- Catatan: Tidak termasuk biaya PBB, maintenance, renovasi, dan pajak
+
 ## Tech Stack
 
 - **Framework:** SvelteKit 2.22.0 (Svelte 5.0.0)
@@ -139,7 +148,8 @@ simulasi-finansial/
 │   │   ├── perencanaan-pensiun/    # Perencanaan Pensiun
 │   │   ├── investasi-berkala/      # Investasi Berkala
 │   │   ├── simulasi-kpr/           # Simulasi KPR
-│   │   └── simulasi-kkb/           # Simulasi KKB
+│   │   ├── simulasi-kkb/           # Simulasi KKB
+│   │   └── investasi-properti/     # Investasi Properti
 │   ├── lib/                        # Shared libraries
 │   ├── app.html                    # HTML template
 │   └── app.css                     # Global styles (Tailwind)
@@ -149,7 +159,8 @@ simulasi-finansial/
 │   ├── obligasi.test.js
 │   ├── perencanaan-pensiun.test.js
 │   ├── simulasi-kpr.test.js
-│   └── simulasi-kkb.test.js
+│   ├── simulasi-kkb.test.js
+│   └── investasi-properti.test.js
 ├── svelte.config.js                # SvelteKit configuration
 ├── vite.config.js                  # Vite configuration
 ├── tailwind.config.js              # Tailwind CSS configuration
