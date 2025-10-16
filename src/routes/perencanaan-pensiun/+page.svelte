@@ -3,12 +3,8 @@
 	let durasiPensiun = $state(0);
 	let tingkatSukuBunga = $state(6); // Default 6% per tahun
 	let tipeSimulasi = $state('habis'); // 'habis' atau 'modal-tetap'
-	let zakatEnabled = $state(true); // Default zakat enabled untuk backward compatibility
 	let hasil = $state(null);
 	let tipeSimulasiSebelumnya = $state('habis'); // Track tipe simulasi sebelumnya
-
-	// Konstanta zakat
-	const TARIF_ZAKAT = 0.025; // 2.5%
 
 	// Reactive statement: kosongkan hasil saat tipe simulasi berubah
 	$effect(() => {
@@ -26,18 +22,17 @@
 
 		const r = tingkatSukuBunga / 100; // Convert percentage to decimal
 		const n = durasiPensiun;
-		const NISAB = 85000000; // 85 juta
 
 		if (tipeSimulasi === 'habis') {
 			// TIPE 1: Dana habis di akhir periode
-			hasil = simulasiDanaHabis(r, n, NISAB);
+			hasil = simulasiDanaHabis(r, n);
 		} else {
 			// TIPE 2: Modal tetap, hidup dari bunga
-			hasil = simulasiModalTetap(r, n, NISAB);
+			hasil = simulasiModalTetap(r, n);
 		}
 	}
 
-	function simulasiDanaHabis(r, n, NISAB) {
+	function simulasiDanaHabis(r, n) {
 		// Pendekatan iteratif: cari dana awal yang cukup untuk bertahan sampai akhir periode
 		// Mulai dengan estimasi menggunakan rumus anuitas, lalu sesuaikan
 		let estimasiDanaAwal = targetDanaTahunan * ((1 - Math.pow(1 + r, -n)) / r);
@@ -46,16 +41,11 @@
 		function simulasiDenganDanaAwal(danaAwal) {
 			const simulasi = [];
 			let sisaDana = danaAwal;
-			let totalZakat = 0;
 			let berhasil = true;
 
 			for (let tahun = 1; tahun <= n; tahun++) {
-				// Zakat dihitung dari sisa dana di awal tahun (sebelum penarikan) - hanya jika zakatEnabled
-				const zakatDibayar = zakatEnabled && sisaDana >= NISAB ? sisaDana * TARIF_ZAKAT : 0;
-				
-				// Total penarikan = dana hidup + zakat
-				const totalPenarikan = targetDanaTahunan + zakatDibayar;
-				totalZakat += zakatDibayar;
+				// Total penarikan = dana hidup
+				const totalPenarikan = targetDanaTahunan;
 
 				// Cek apakah dana mencukupi
 				if (sisaDana < totalPenarikan) {
@@ -74,15 +64,13 @@
 					tahun,
 					sisaDanaAwal: sisaDana + totalPenarikan - bungaDiperoleh,
 					danaDigunakan: targetDanaTahunan,
-					zakatDibayar,
 					totalPenarikan,
 					bungaDiperoleh,
-					sisaDanaAkhir: sisaDana,
-					kenaZakat: zakatEnabled && sisaDana + totalPenarikan - bungaDiperoleh >= NISAB
+					sisaDanaAkhir: sisaDana
 				});
 			}
 
-			return { simulasi, totalZakat, berhasil, sisaDanaAkhir: sisaDana };
+			return { simulasi, berhasil, sisaDanaAkhir: sisaDana };
 		}
 
 		// Binary search untuk menemukan dana awal yang optimal
@@ -90,7 +78,6 @@
 		let danaAwalMax = estimasiDanaAwal * 3; // Maksimal 3x estimasi
 		let danaAwalOptimal = estimasiDanaAwal;
 		let simulasiOptimal = null;
-		let totalZakatOptimal = 0;
 
 		// Pastikan estimasi minimal bisa berhasil
 		while (!simulasiDenganDanaAwal(danaAwalMax).berhasil && danaAwalMax < estimasiDanaAwal * 10) {
@@ -106,7 +93,6 @@
 				// Berhasil, coba dengan dana yang lebih kecil
 				danaAwalOptimal = danaAwalTest;
 				simulasiOptimal = hasil.simulasi;
-				totalZakatOptimal = hasil.totalZakat;
 				danaAwalMax = danaAwalTest;
 			} else {
 				// Gagal, butuh dana yang lebih besar
@@ -124,15 +110,10 @@
 			const hasilAman = simulasiDenganDanaAwal(danaAwalMax);
 			danaAwalOptimal = danaAwalMax;
 			simulasiOptimal = hasilAman.simulasi;
-			totalZakatOptimal = hasilAman.totalZakat;
 		}
 
-		// Hitung estimasi dana tanpa zakat (untuk perbandingan)
+		// Hitung faktor anuitas untuk referensi
 		const faktorAnnuitas = (1 - Math.pow(1 + r, -n)) / r;
-		const danaDiperlukanTanpaZakat = targetDanaTahunan * faktorAnnuitas;
-
-		// Hitung rata-rata zakat tahunan
-		const rataRataZakatTahunan = totalZakatOptimal / n;
 
 		return {
 			tipeSimulasi: 'Dana Habis di Akhir Periode',
@@ -143,38 +124,28 @@
 				tipeSimulasi
 			},
 			perhitungan: {
-				danaDiperlukanTanpaZakat,
-				estimasiTambahanUntukZakat: danaAwalOptimal - danaDiperlukanTanpaZakat,
 				totalDanaDiperlukan: danaAwalOptimal,
-				totalZakatSelamaPensiun: totalZakatOptimal,
-				rataRataZakatTahunan,
 				faktorAnnuitas
 			},
 			simulasiTahunan: simulasiOptimal
 		};
 	}
 
-	function simulasiModalTetap(r, n, NISAB) {
+	function simulasiModalTetap(r, n) {
 		// TIPE 2: Modal tetap, hidup dari bunga saja
-		// Cari modal yang bunganya cukup untuk menutupi target dana + zakat
+		// Cari modal yang bunganya cukup untuk menutupi target dana
 
 		function hitungDenganModal(modalAwal) {
 			const simulasi = [];
 			let sisaDana = modalAwal;
-			let totalZakat = 0;
 			let berhasil = true;
 
 			for (let tahun = 1; tahun <= n; tahun++) {
 				// Hitung bunga dari modal
 				const bungaDiperoleh = sisaDana * r;
-				
-				// Zakat dihitung dari total dana (modal + bunga yang belum diambil) - hanya jika zakatEnabled
-				const totalDanaSebelumPenarikan = sisaDana + bungaDiperoleh;
-				const zakatDibayar = zakatEnabled && totalDanaSebelumPenarikan >= NISAB ? totalDanaSebelumPenarikan * TARIF_ZAKAT : 0;
-				
-				// Total penarikan = dana hidup + zakat
-				const totalPenarikan = targetDanaTahunan + zakatDibayar;
-				totalZakat += zakatDibayar;
+
+				// Total penarikan = dana hidup
+				const totalPenarikan = targetDanaTahunan;
 
 				// Cek apakah bunga mencukupi untuk penarikan
 				if (bungaDiperoleh < totalPenarikan) {
@@ -193,15 +164,13 @@
 					modalTetap: modalAwal,
 					bungaDiperoleh: bungaDiperoleh,
 					danaDigunakan: targetDanaTahunan,
-					zakatDibayar,
 					totalPenarikan,
 					sisaBunga: sisaBunga,
-					sisaDanaAkhir: sisaDana,
-					kenaZakat: zakatEnabled && totalDanaSebelumPenarikan >= NISAB
+					sisaDanaAkhir: sisaDana
 				});
 			}
 
-			return { simulasi, totalZakat, berhasil };
+			return { simulasi, berhasil };
 		}
 
 		// Binary search untuk mencari modal minimal yang cukup
@@ -209,7 +178,6 @@
 		let modalMax = modalMin * 10; // Maksimal 10x
 		let modalOptimal = modalMin;
 		let simulasiOptimal = null;
-		let totalZakatOptimal = 0;
 
 		// Pastikan estimasi maksimal bisa berhasil
 		while (!hitungDenganModal(modalMax).berhasil && modalMax < modalMin * 50) {
@@ -225,7 +193,6 @@
 				// Berhasil, coba dengan modal yang lebih kecil
 				modalOptimal = modalTest;
 				simulasiOptimal = hasil.simulasi;
-				totalZakatOptimal = hasil.totalZakat;
 				modalMax = modalTest;
 			} else {
 				// Gagal, butuh modal yang lebih besar
@@ -243,11 +210,7 @@
 			const hasilAman = hitungDenganModal(modalMax);
 			modalOptimal = modalMax;
 			simulasiOptimal = hasilAman.simulasi;
-			totalZakatOptimal = hasilAman.totalZakat;
 		}
-
-		// Hitung rata-rata zakat tahunan
-		const rataRataZakatTahunan = totalZakatOptimal / n;
 
 		return {
 			tipeSimulasi: 'Modal Tetap (Hidup dari Bunga)',
@@ -261,8 +224,6 @@
 				modalDiperlukan: modalOptimal,
 				bungaRataRataTahunan: modalOptimal * r,
 				totalDanaDiperlukan: modalOptimal,
-				totalZakatSelamaPensiun: totalZakatOptimal,
-				rataRataZakatTahunan,
 				efisiensiModal: `${((modalOptimal * r - targetDanaTahunan) / (modalOptimal * r) * 100).toFixed(1)}%`
 			},
 			simulasiTahunan: simulasiOptimal
@@ -274,7 +235,6 @@
 		durasiPensiun = 0;
 		tingkatSukuBunga = 6;
 		tipeSimulasi = 'habis';
-		zakatEnabled = true;
 		tipeSimulasiSebelumnya = 'habis';
 		hasil = null;
 	}
@@ -295,7 +255,7 @@
 
 <svelte:head>
 	<title>Perencanaan Pensiun - Simulasi Finansial</title>
-	<meta name="description" content="Simulasi perencanaan dana pensiun dengan rumus anuitas dan perhitungan zakat 2,5%" />
+	<meta name="description" content="Simulasi perencanaan dana pensiun dengan rumus anuitas" />
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 py-8 px-4">
@@ -327,7 +287,7 @@
 		<div class="text-center mb-8">
 			<h1 class="text-4xl font-bold text-gray-800 mb-2">Perencanaan Pensiun</h1>
 			<p class="text-gray-600 text-lg">
-				Simulasi dana pensiun dengan rumus anuitas dan perhitungan zakat 2,5% per tahun
+				Simulasi dana pensiun dengan rumus anuitas
 			</p>
 		</div>
 
@@ -433,24 +393,6 @@
 							Pilih strategi: dana habis di akhir vs modal tetap selamanya
 						</p>
 					</fieldset>
-
-					<!-- Zakat Toggle -->
-					<div class="flex justify-center">
-						<div class="flex items-center space-x-3">
-							<input
-								id="zakat-toggle"
-								type="checkbox"
-								bind:checked={zakatEnabled}
-								class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-							/>
-							<label for="zakat-toggle" class="text-sm font-medium text-gray-700 flex items-center">
-								<svg class="w-4 h-4 mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-								</svg>
-								Aktifkan Zakat (2,5% per tahun dari harta)
-							</label>
-						</div>
-					</div>
 				</div>
 
 				<div class="md:col-span-3 flex gap-4 justify-center">
@@ -510,41 +452,18 @@
 
 					{#if tipeSimulasi === 'habis'}
 						<!-- Summary untuk Dana Habis -->
-						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-{zakatEnabled ? '4' : '2'} gap-6">
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
 								<div class="text-purple-600 text-sm font-medium">Total Dana Diperlukan</div>
 								<div id="total-dana-diperlukan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
 									{formatRupiah(hasil.perhitungan.totalDanaDiperlukan)}
 								</div>
-								<div class="text-xs text-gray-500 mt-1">{zakatEnabled ? 'Dana + Estimasi Zakat' : 'Dana tanpa zakat'}</div>
+								<div class="text-xs text-gray-500 mt-1">Dana awal untuk seluruh periode pensiun</div>
 							</div>
-							{#if zakatEnabled}
-								<div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
-									<div class="text-blue-600 text-sm font-medium">Dana Pensiun Murni</div>
-									<div id="dana-pensiun-murni-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
-										{formatRupiah(hasil.perhitungan.danaDiperlukanTanpaZakat || 0)}
-									</div>
-									<div class="text-xs text-gray-500 mt-1">Tanpa zakat</div>
-								</div>
-								<div class="bg-orange-50 p-6 rounded-xl border border-orange-100">
-									<div class="text-orange-600 text-sm font-medium">Total Zakat</div>
-									<div id="total-zakat-pensiun-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
-										{formatRupiah(hasil.perhitungan.totalZakatSelamaPensiun)}
-									</div>
-									<div class="text-xs text-gray-500 mt-1">Selama {hasil.inputData.durasiPensiun} tahun</div>
-								</div>
-								<div class="bg-green-50 p-6 rounded-xl border border-green-100">
-									<div class="text-green-600 text-sm font-medium">Rata-rata Zakat/Tahun</div>
-									<div id="rata-zakat-tahunan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
-										{formatRupiah(hasil.perhitungan.rataRataZakatTahunan)}
-									</div>
-									<div class="text-xs text-gray-500 mt-1">2.5% dari harta</div>
-								</div>
-							{/if}
 						</div>
 					{:else}
 						<!-- Summary untuk Modal Tetap -->
-						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-{zakatEnabled ? '4' : '2'} gap-6">
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
 								<div class="text-purple-600 text-sm font-medium">Modal Diperlukan</div>
 								<div id="modal-diperlukan-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
@@ -559,22 +478,6 @@
 								</div>
 								<div class="text-xs text-gray-500 mt-1">Return per tahun</div>
 							</div>
-							{#if zakatEnabled}
-								<div class="bg-orange-50 p-6 rounded-xl border border-orange-100">
-									<div class="text-orange-600 text-sm font-medium">Total Zakat</div>
-									<div id="total-zakat-modal-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
-										{formatRupiah(hasil.perhitungan.totalZakatSelamaPensiun)}
-									</div>
-									<div class="text-xs text-gray-500 mt-1">Selama {hasil.inputData.durasiPensiun} tahun</div>
-								</div>
-								<div class="bg-green-50 p-6 rounded-xl border border-green-100">
-									<div class="text-green-600 text-sm font-medium">Rata-rata Zakat/Tahun</div>
-									<div id="rata-zakat-modal-amount" class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-1 break-words leading-tight">
-										{formatRupiah(hasil.perhitungan.rataRataZakatTahunan)}
-									</div>
-									<div class="text-xs text-gray-500 mt-1">2.5% dari harta</div>
-								</div>
-							{/if}
 						</div>
 					{/if}
 
@@ -640,14 +543,6 @@
 									<th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
 										Dana Digunakan
 									</th>
-									{#if zakatEnabled}
-										<th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-											Zakat Dibayar
-										</th>
-										<th class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-											Status Zakat
-										</th>
-									{/if}
 									<th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
 										Total Penarikan
 									</th>
@@ -686,22 +581,6 @@
 										<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-blue-600">
 											{formatRupiah(item.danaDigunakan)}
 										</td>
-										{#if zakatEnabled}
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-orange-600">
-												{formatRupiah(item.zakatDibayar)}
-											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-												{#if item.kenaZakat}
-													<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-														Wajib
-													</span>
-												{:else}
-													<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-														Tidak Wajib
-													</span>
-												{/if}
-											</td>
-										{/if}
 										<td class="px-6 py-4 whitespace-nowrap text-sm text-right text-red-600 font-medium">
 											{formatRupiah(item.totalPenarikan)}
 										</td>
@@ -746,13 +625,9 @@
 				<ul class="list-disc list-inside space-y-1 ml-4">
 					<li>Dimulai dengan estimasi rumus anuitas sebagai baseline</li>
 					<li>Menggunakan binary search untuk menemukan dana minimal yang cukup</li>
-					<li>Memperhitungkan zakat 2.5% dari total harta setiap tahun</li>
 					<li>Memastikan dana tidak habis sebelum periode berakhir</li>
 					<li>Bunga/return investasi ditambahkan setiap tahun</li>
 				</ul>
-				<p>
-					<strong>Perhitungan Zakat:</strong> 2.5% dari total harta (sisa dana) jika mencapai nisab 85 juta rupiah.
-				</p>
 			</div>
 		</div>
 
@@ -771,14 +646,10 @@
 			</h3>
 			<ul class="text-yellow-700 text-sm space-y-1">
 				<li>• Simulasi ini menggunakan metode iteratif dengan asumsi suku bunga tetap</li>
-				<li>• Zakat dapat diaktifkan/dinonaktifkan sesuai kebutuhan simulasi</li>
-				<li>• Zakat 2.5% dihitung dari total harta (sisa dana) yang dimiliki, bukan dari penghasilan</li>
-				<li>• Zakat hanya wajib jika total harta mencapai nisab (85 juta rupiah setara 85 gram emas)</li>
 				<li>• Dana dihitung agar dapat bertahan hingga akhir periode tanpa deficit</li>
 				<li>• Inflasi belum diperhitungkan dalam simulasi ini</li>
 				<li>• Asumsi return investasi konstan setiap tahun (dalam praktik bisa berfluktuasi)</li>
 				<li>• Konsultasikan dengan perencana keuangan untuk perencanaan yang lebih detail</li>
-				<li>• Konsultasikan dengan ustadz/kyai untuk perhitungan zakat yang lebih akurat</li>
 			</ul>
 		</div>
 	</div>
