@@ -11,6 +11,11 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 	});
 
 	test('form input harta memiliki elemen yang diperlukan', async ({ page }) => {
+		// Check harga emas section
+		await expect(page.getByRole('heading', { name: 'Harga Emas Saat Ini' })).toBeVisible();
+		await expect(page.locator('#harga-emas')).toBeVisible();
+		await expect(page.getByText('Nisab zakat mal = 85 gram emas')).toBeVisible();
+
 		// Check initial form elements
 		await expect(page.getByText('Daftar Harta')).toBeVisible();
 		await expect(page.getByText('Harta #1')).toBeVisible();
@@ -58,6 +63,9 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 	});
 
 	test('input dengan nilai langsung berfungsi dengan benar', async ({ page }) => {
+		// Harga emas should be pre-filled with default value (1000000)
+		await expect(page.locator('#harga-emas')).toHaveValue('1000000');
+
 		// Fill form with direct value input
 		await page.locator('input[placeholder*="Contoh: Emas, Tabungan"]').fill('Tabungan');
 
@@ -251,7 +259,7 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 			page.getByText('Zakat mal wajib dibayar jika total harta mencapai nisab')
 		).toBeVisible();
 		await expect(page.getByText('Tarif zakat mal adalah 2,5% dari total harta')).toBeVisible();
-		await expect(page.getByText('Nisab dihitung berdasarkan harga emas saat ini')).toBeVisible();
+		await expect(page.getByText('Nisab dihitung berdasarkan harga emas saat ini, pastikan mengisi harga emas terkini')).toBeVisible();
 		await expect(page.getByText('Harta harus dimiliki selama 1 tahun (haul)')).toBeVisible();
 		await expect(page.getByText('Konsultasikan dengan ustadz/kyai')).toBeVisible();
 	});
@@ -287,6 +295,67 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 		await expect(page.locator('#total-harta-amount')).toContainText('Rp 100.000.000', { timeout: 10000 }); // Total harta summary card
 		await expect(page.locator('#nisab-amount')).toContainText('Rp 85.000.000', { timeout: 10000 }); // Nisab
 		await expect(page.locator('#jumlah-zakat-amount')).toContainText('Rp 2.500.000', { timeout: 10000 }); // Zakat amount (2.5% of 100M)
+	});
+
+	test('harga emas dapat diubah dan mempengaruhi nisab', async ({ page }) => {
+		// Check default harga emas
+		await expect(page.locator('#harga-emas')).toHaveValue('1000000');
+
+		// Default nisab should be 85M (85 gram × 1M/gram)
+		await expect(page.getByText('Rp 85.000.000')).toBeVisible();
+
+		// Change harga emas to 1.2M per gram
+		await page.locator('#harga-emas').clear();
+		await page.locator('#harga-emas').fill('1200000');
+
+		// Nisab should update to 102M (85 gram × 1.2M/gram)
+		await expect(page.getByText('Rp 102.000.000')).toBeVisible();
+
+		// Fill harta with 100M
+		await page.locator('input[placeholder*="Contoh: Emas, Tabungan"]').fill('Tabungan');
+		await page.locator('input[placeholder="10000000"]').fill('100000000');
+
+		// Calculate zakat
+		await page.getByRole('button', { name: 'Hitung Zakat' }).click();
+
+		// With nisab at 102M, 100M should be "Belum Wajib"
+		await expect(page.locator('#status-zakat')).toContainText('Belum Wajib');
+		await expect(page.locator('#nisab-amount')).toContainText('Rp 102.000.000');
+	});
+
+	test('validasi harga emas tidak boleh kosong atau nol', async ({ page }) => {
+		// Clear harga emas
+		await page.locator('#harga-emas').clear();
+
+		// Fill harta
+		await page.locator('input[placeholder*="Contoh: Emas, Tabungan"]').fill('Tabungan');
+		await page.locator('input[placeholder="10000000"]').fill('100000000');
+
+		// Try to calculate
+		await page.getByRole('button', { name: 'Hitung Zakat' }).click();
+
+		// Should not show results (alert will prevent calculation)
+		await expect(page.getByText('Status Kewajiban Zakat')).not.toBeVisible();
+	});
+
+	test('tombol reset mengembalikan harga emas ke default', async ({ page }) => {
+		// Change harga emas
+		await page.locator('#harga-emas').clear();
+		await page.locator('#harga-emas').fill('1500000');
+
+		// Verify change
+		await expect(page.locator('#harga-emas')).toHaveValue('1500000');
+
+		// Fill some data and calculate
+		await page.locator('input[placeholder*="Contoh: Emas, Tabungan"]').fill('Test');
+		await page.locator('input[placeholder="10000000"]').fill('100000000');
+		await page.getByRole('button', { name: 'Hitung Zakat' }).click();
+
+		// Reset
+		await page.getByRole('button', { name: 'Reset' }).click();
+
+		// Harga emas should be back to default (1000000)
+		await expect(page.locator('#harga-emas')).toHaveValue('1000000');
 	});
 
 	test('tombol kembali ke halaman utama berfungsi', async ({ page }) => {

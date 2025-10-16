@@ -12,9 +12,10 @@
 
 	let hasil = $state(null);
 	let nextId = $state(2);
+	let hargaEmasPerGram = $state(1000000); // Default harga emas per gram
 
-	// Nisab dalam rupiah (setara 85 gram emas, asumsi harga emas Rp 1.000.000/gram)
-	const NISAB_RUPIAH = 85 * 1000000; // 85 juta rupiah
+	// Nisab dalam rupiah (setara 85 gram emas)
+	const NISAB_GRAM_EMAS = 85;
 	const TARIF_ZAKAT = 0.025; // 2.5%
 
 	function tambahHarta() {
@@ -45,6 +46,12 @@
 	}
 
 	function hitungZakat() {
+		// Validasi harga emas
+		if (!hargaEmasPerGram || hargaEmasPerGram <= 0) {
+			alert('Mohon isi harga emas per gram dengan nilai yang valid!');
+			return;
+		}
+
 		// Update semua nilai total terlebih dahulu
 		hartaList.forEach((harta) => updateNilaiTotal(harta));
 
@@ -61,8 +68,11 @@
 		// Hitung total harta
 		const totalHarta = hartaValid.reduce((total, harta) => total + harta.nilaiTotal, 0);
 
+		// Hitung nisab berdasarkan harga emas saat ini
+		const nisabRupiah = NISAB_GRAM_EMAS * hargaEmasPerGram;
+
 		// Cek apakah mencapai nisab
-		const mencapaiNisab = totalHarta >= NISAB_RUPIAH;
+		const mencapaiNisab = totalHarta >= nisabRupiah;
 
 		// Hitung zakat
 		const jumlahZakat = mencapaiNisab ? totalHarta * TARIF_ZAKAT : 0;
@@ -70,7 +80,8 @@
 		hasil = {
 			hartaValid,
 			totalHarta,
-			nisab: NISAB_RUPIAH,
+			nisab: nisabRupiah,
+			hargaEmas: hargaEmasPerGram,
 			mencapaiNisab,
 			jumlahZakat,
 			persentaseZakat: TARIF_ZAKAT * 100
@@ -88,6 +99,7 @@
 				nilaiTotal: 0
 			}
 		];
+		hargaEmasPerGram = 1000000; // Reset ke default
 		hasil = null;
 		nextId = 2;
 	}
@@ -141,6 +153,47 @@
 			<p class="text-gray-600 text-lg">
 				Hitung zakat mal 2,5% dari berbagai jenis harta dengan mudah dan akurat
 			</p>
+		</div>
+
+		<!-- Input Harga Emas -->
+		<div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+			<h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+				<svg
+					class="w-6 h-6 mr-2 text-yellow-600"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+					></path>
+				</svg>
+				Harga Emas Saat Ini
+			</h2>
+
+			<div class="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
+				<div class="space-y-2">
+					<label for="harga-emas" class="block text-sm font-medium text-gray-700">
+						Harga Emas per Gram (Rp)
+					</label>
+					<input
+						id="harga-emas"
+						type="number"
+						bind:value={hargaEmasPerGram}
+						placeholder="1000000"
+						class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-lg"
+						min="1"
+						step="any"
+						required
+					/>
+					<p class="text-sm text-gray-600">
+						Nisab zakat mal = 85 gram emas = {formatRupiah(NISAB_GRAM_EMAS * hargaEmasPerGram)}
+					</p>
+				</div>
+			</div>
 		</div>
 
 		<!-- Form Input Harta -->
@@ -491,7 +544,7 @@
 			<ul class="text-yellow-700 text-sm space-y-1">
 				<li>• Zakat mal wajib dibayar jika total harta mencapai nisab (setara 85 gram emas)</li>
 				<li>• Tarif zakat mal adalah 2,5% dari total harta yang dizakati</li>
-				<li>• Nisab dihitung berdasarkan harga emas saat ini (asumsi: Rp 1.000.000/gram)</li>
+				<li>• Nisab dihitung berdasarkan harga emas saat ini, pastikan mengisi harga emas terkini</li>
 				<li>• Harta harus dimiliki selama 1 tahun (haul) untuk wajib zakat</li>
 				<li>• Konsultasikan dengan ustadz/kyai untuk detail perhitungan yang lebih akurat</li>
 			</ul>

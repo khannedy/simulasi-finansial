@@ -47,9 +47,6 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		// Wait for any JS to execute
 		await page.waitForTimeout(1000);
 
-		// Debug: Take screenshot
-		await page.screenshot({ path: 'test-debug.png' });
-
 		// Check if results are displayed
 		await expect(page.locator('text=Ringkasan Investasi')).toBeVisible();
 		await expect(page.locator('text=Detail Kupon Bulanan')).toBeVisible();
