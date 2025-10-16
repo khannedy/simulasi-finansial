@@ -7,7 +7,7 @@
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-	<div class="max-w-4xl mx-auto">
+	<div class="max-w-7xl mx-auto">
 		<!-- Header -->
 		<div class="text-center mb-12">
 			<h1 class="text-5xl font-bold text-gray-800 mb-4">Simulasi Finansial</h1>
@@ -18,7 +18,7 @@
 		</div>
 
 		<!-- Features Grid -->
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 			<!-- Dana Darurat Card -->
 			<a
 				href="/dana-darurat"
