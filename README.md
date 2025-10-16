@@ -4,13 +4,25 @@ Platform simulasi dan perencanaan keuangan berbasis web untuk pengguna Indonesia
 
 ## Fitur Utama
 
-### 1. Simulasi Obligasi
+### 1. Dana Darurat (Emergency Fund Calculator)
+Kalkulator untuk menentukan berapa dana darurat ideal yang dibutuhkan.
+- Input: Pengeluaran bulanan, jenis pekerjaan (Tetap/Freelance/Wiraswasta), jumlah tanggungan keluarga, dana darurat saat ini (opsional)
+- Perhitungan:
+  - Pegawai Tetap: 3-6 bulan pengeluaran
+  - Freelance/Wiraswasta: 6-12 bulan pengeluaran
+  - Adjustment: +1 bulan per tanggungan keluarga
+- Output: Rekomendasi 3 level (Minimum, Ideal, Maksimal)
+- Progress tracker: Visual progress bar dana saat ini vs target ideal
+- Simulasi waktu: Berapa bulan untuk mencapai target dengan tabungan bulanan tertentu
+- Educational content: Penjelasan pentingnya dana darurat dan tips membangunnya
+
+### 2. Simulasi Obligasi
 Kalkulator untuk menghitung pembayaran kupon bulanan, pajak, dan total pendapatan dari investasi obligasi.
 - Input: Saldo obligasi, tingkat bunga tahunan, durasi investasi
 - Perhitungan: Kupon bulanan bruto, pajak 10%, kupon bersih
 - Output: Tabel per bulan dan ringkasan kartu
 
-### 2. Kalkulator Zakat Mal
+### 3. Kalkulator Zakat Mal
 Kalkulator Zakat (zakat harta) dengan rate 2.5% untuk berbagai jenis aset.
 - Input harga emas yang dapat disesuaikan untuk perhitungan nisab akurat
 - Input fleksibel: Tambah berbagai jenis aset secara dinamis
@@ -19,7 +31,7 @@ Kalkulator Zakat (zakat harta) dengan rate 2.5% untuk berbagai jenis aset.
 - Manajemen daftar aset dinamis (tambah/hapus item)
 - Perhitungan otomatis dan penentuan status Zakat
 
-### 3. Perencanaan Pensiun
+### 4. Perencanaan Pensiun
 Simulasi perencanaan dana pensiun menggunakan model matematis.
 - Dua tipe simulasi:
   1. Dana Habis di Akhir Periode
@@ -28,14 +40,14 @@ Simulasi perencanaan dana pensiun menggunakan model matematis.
 - Algoritma binary search untuk menemukan dana awal optimal
 - Breakdown komprehensif per tahun
 
-### 4. Investasi Berkala
+### 5. Investasi Berkala
 Kalkulator pertumbuhan investasi bulanan reguler dengan bunga majemuk.
 - Input: Dana awal (opsional), investasi bulanan, durasi, tingkat bunga tahunan
 - Bunga majemuk dihitung bulanan
 - Tracking detail per bulan
 - Ringkasan visual dengan 5 metrik kunci
 
-### 5. Simulasi KPR (Kredit Pemilikan Rumah)
+### 6. Simulasi KPR (Kredit Pemilikan Rumah)
 Kalkulator cicilan KPR dengan metode anuitas.
 - Input: Harga rumah, down payment (%), lama cicilan (tahun), suku bunga (% per tahun)
 - Perhitungan: Cicilan bulanan dengan metode anuitas (cicilan tetap)
@@ -43,7 +55,7 @@ Kalkulator cicilan KPR dengan metode anuitas.
 - Ringkasan: Total pembayaran, total bunga, jumlah pinjaman
 - Simulasi lengkap dari bulan pertama hingga lunas
 
-### 6. Simulasi KKB (Kredit Kendaraan Bermotor)
+### 7. Simulasi KKB (Kredit Kendaraan Bermotor)
 Kalkulator cicilan kredit kendaraan dengan metode anuitas.
 - Input: Harga kendaraan, down payment (%), lama cicilan (tahun), suku bunga (% per tahun)
 - Perhitungan: Cicilan bulanan dengan metode anuitas (cicilan tetap)
@@ -52,7 +64,7 @@ Kalkulator cicilan kredit kendaraan dengan metode anuitas.
 - Simulasi lengkap dari bulan pertama hingga lunas
 - Tenor maksimal: 7 tahun
 
-### 7. Investasi Properti
+### 8. Investasi Properti
 Kalkulator investasi properti untuk disewakan dengan tracking capital gain dan rental income.
 - Input: Harga properti, kenaikan harga per tahun (%), harga sewa per tahun, durasi simulasi (tahun)
 - Perhitungan: Compound growth untuk nilai properti, akumulasi pendapatan sewa
@@ -143,6 +155,7 @@ simulasi-finansial/
 │   ├── routes/                     # SvelteKit file-based routing
 │   │   ├── +layout.svelte          # Root layout component
 │   │   ├── +page.svelte            # Home page
+│   │   ├── dana-darurat/           # Dana Darurat
 │   │   ├── obligasi/               # Simulasi Obligasi
 │   │   ├── zakat-mal/              # Kalkulator Zakat Mal
 │   │   ├── perencanaan-pensiun/    # Perencanaan Pensiun
@@ -154,6 +167,7 @@ simulasi-finansial/
 │   ├── app.html                    # HTML template
 │   └── app.css                     # Global styles (Tailwind)
 ├── e2e/                            # End-to-end tests
+│   ├── dana-darurat.test.js
 │   ├── investasi-berkala.test.js
 │   ├── zakat-mal.test.js
 │   ├── obligasi.test.js

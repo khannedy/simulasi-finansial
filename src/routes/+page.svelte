@@ -19,6 +19,41 @@
 
 		<!-- Features Grid -->
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<!-- Dana Darurat Card -->
+			<a
+				href="/dana-darurat"
+				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
+			>
+				<div
+					class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-xl mb-6 group-hover:bg-green-200 transition-colors"
+				>
+					<svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+						></path>
+					</svg>
+				</div>
+				<h2 class="text-2xl font-bold text-gray-800 mb-3">Dana Darurat</h2>
+				<p class="text-gray-600 mb-4">
+					Hitung berapa dana darurat ideal yang Anda butuhkan berdasarkan pengeluaran, pekerjaan, dan tanggungan keluarga
+				</p>
+				<div class="flex items-center text-green-600 font-semibold group-hover:text-green-700">
+					Mulai Hitung
+					<svg
+						class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"
+						></path>
+					</svg>
+				</div>
+			</a>
+
 			<!-- Obligasi Card -->
 			<a
 				href="/obligasi"
