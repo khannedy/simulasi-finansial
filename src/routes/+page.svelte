@@ -74,7 +74,7 @@
 				</div>
 				<h2 class="text-2xl font-bold text-gray-800 mb-3">Kalkulator Zakat Mal</h2>
 				<p class="text-gray-600 mb-4">
-					Hitung zakat mal 2,5% dari berbagai jenis harta dengan input yang fleksibel dan akurat
+					Hitung zakat mal 2,5% dari berbagai jenis harta dengan input harga emas yang dapat disesuaikan untuk perhitungan nisab akurat
 				</p>
 				<div class="flex items-center text-green-600 font-semibold group-hover:text-green-700">
 					Mulai Hitung Zakat
@@ -109,7 +109,7 @@
 				</div>
 				<h2 class="text-2xl font-bold text-gray-800 mb-3">Perencanaan Pensiun</h2>
 				<p class="text-gray-600 mb-4">
-					Simulasi dana pensiun dengan rumus anuitas dan perhitungan zakat 2,5% per tahun
+					Simulasi dana pensiun dengan rumus anuitas dan dua tipe perencanaan: dana habis atau modal tetap
 				</p>
 				<div class="flex items-center text-purple-600 font-semibold group-hover:text-purple-700">
 					Mulai Perencanaan

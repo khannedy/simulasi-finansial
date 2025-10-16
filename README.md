@@ -12,9 +12,10 @@ Kalkulator untuk menghitung pembayaran kupon bulanan, pajak, dan total pendapata
 
 ### 2. Kalkulator Zakat Mal
 Kalkulator Zakat (zakat harta) dengan rate 2.5% untuk berbagai jenis aset.
+- Input harga emas yang dapat disesuaikan untuk perhitungan nisab akurat
 - Input fleksibel: Tambah berbagai jenis aset secara dinamis
 - Dua mode input: Nilai langsung atau Harga × Jumlah
-- Threshold Nisab: 85 juta IDR (setara 85g emas)
+- Threshold Nisab: 85 gram emas (nilai rupiah disesuaikan dengan harga emas)
 - Manajemen daftar aset dinamis (tambah/hapus item)
 - Perhitungan otomatis dan penentuan status Zakat
 
@@ -25,16 +26,14 @@ Simulasi perencanaan dana pensiun menggunakan model matematis.
   2. Modal Tetap (Hidup dari Bunga)
 - Input: Target dana tahunan, durasi, tingkat bunga
 - Algoritma binary search untuk menemukan dana awal optimal
-- Opsional: Perhitungan Zakat 2.5% tahunan
 - Breakdown komprehensif per tahun
 
 ### 4. Investasi Berkala
 Kalkulator pertumbuhan investasi bulanan reguler dengan bunga majemuk.
 - Input: Dana awal (opsional), investasi bulanan, durasi, tingkat bunga tahunan
 - Bunga majemuk dihitung bulanan
-- Perhitungan Zakat untuk dana yang dipegang ≥1 tahun
 - Tracking detail per bulan
-- Ringkasan visual dengan 6 metrik kunci
+- Ringkasan visual dengan 5 metrik kunci
 
 ### Coming Soon
 - Simulasi Saham (Stock Investment)
