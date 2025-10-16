@@ -75,6 +75,29 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
 	<div class="max-w-6xl mx-auto">
+		<!-- Back to Home Button -->
+		<div class="mb-6">
+			<a
+				href="/"
+				class="inline-flex items-center text-gray-700 hover:text-blue-600 transition-colors duration-200 group"
+			>
+				<svg
+					class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-200"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M10 19l-7-7m0 0l7-7m-7 7h18"
+					></path>
+				</svg>
+				<span class="font-medium">Kembali ke Halaman Utama</span>
+			</a>
+		</div>
+
 		<!-- Header -->
 		<div class="text-center mb-8">
 			<h1 class="text-4xl font-bold text-gray-800 mb-2">Simulasi Obligasi</h1>

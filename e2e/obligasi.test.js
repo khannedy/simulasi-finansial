@@ -224,4 +224,17 @@ test.describe('Halaman Simulasi Obligasi', () => {
 		).toBeVisible();
 		await expect(page.getByText('Hasil simulasi bersifat ilustratif')).toBeVisible();
 	});
+
+	test('tombol kembali ke halaman utama berfungsi', async ({ page }) => {
+		// Check if back to home link exists
+		const backLink = page.locator('a[href="/"]').filter({ hasText: 'Kembali ke Halaman Utama' });
+		await expect(backLink).toBeVisible();
+
+		// Click the link
+		await backLink.click();
+
+		// Should navigate to home page
+		await expect(page).toHaveURL('/');
+		await expect(page.getByRole('heading', { name: 'Simulasi Finansial', exact: true })).toBeVisible();
+	});
 });

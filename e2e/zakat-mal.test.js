@@ -288,4 +288,17 @@ test.describe('Halaman Kalkulator Zakat Mal', () => {
 		await expect(page.locator('#nisab-amount')).toContainText('Rp 85.000.000', { timeout: 10000 }); // Nisab
 		await expect(page.locator('#jumlah-zakat-amount')).toContainText('Rp 2.500.000', { timeout: 10000 }); // Zakat amount (2.5% of 100M)
 	});
+
+	test('tombol kembali ke halaman utama berfungsi', async ({ page }) => {
+		// Check if back to home link exists
+		const backLink = page.locator('a[href="/"]').filter({ hasText: 'Kembali ke Halaman Utama' });
+		await expect(backLink).toBeVisible();
+
+		// Click the link
+		await backLink.click();
+
+		// Should navigate to home page
+		await expect(page).toHaveURL('/');
+		await expect(page.getByRole('heading', { name: 'Simulasi Finansial', exact: true })).toBeVisible();
+	});
 });
