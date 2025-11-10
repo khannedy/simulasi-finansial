@@ -20,6 +20,8 @@ jobs:
         run: bun install
 
       - name: Build
+        env:
+          NODE_ENV: production
         run: bun run build
 
       - name: Upload Artifacts

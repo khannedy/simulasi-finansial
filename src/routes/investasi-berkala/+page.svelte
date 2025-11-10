@@ -1,4 +1,6 @@
 <script>
+	import { base } from '$app/paths';
+
 	let danaSaatIni = $state(0);
 	let investasiBulanan = $state(0);
 	let jangkaWaktu = $state(0);
@@ -81,7 +83,7 @@
 		<!-- Back to Home Button -->
 		<div class="mb-6">
 			<a
-				href="/"
+				href="{base}/"
 				class="inline-flex items-center text-gray-700 hover:text-emerald-600 transition-colors duration-200 group"
 			>
 				<svg

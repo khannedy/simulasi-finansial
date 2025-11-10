@@ -1,4 +1,6 @@
 <script>
+	import { base } from '$app/paths';
+
 	let hargaKendaraan = $state(0);
 	let dp = $state(20); // Default 20%
 	let lamaCicilan = $state(0);
@@ -101,7 +103,7 @@
 		<!-- Back to Home Button -->
 		<div class="mb-6">
 			<a
-				href="/"
+				href="{base}/"
 				class="inline-flex items-center text-gray-700 hover:text-teal-600 transition-colors duration-200 group"
 			>
 				<svg

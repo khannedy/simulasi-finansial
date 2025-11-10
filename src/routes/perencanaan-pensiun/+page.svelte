@@ -1,4 +1,6 @@
 <script>
+	import { base } from '$app/paths';
+
 	let targetDanaTahunan = $state(0);
 	let durasiPensiun = $state(0);
 	let tingkatSukuBunga = $state(6); // Default 6% per tahun
@@ -263,7 +265,7 @@
 		<!-- Back to Home Button -->
 		<div class="mb-6">
 			<a
-				href="/"
+				href="{base}/"
 				class="inline-flex items-center text-gray-700 hover:text-purple-600 transition-colors duration-200 group"
 			>
 				<svg

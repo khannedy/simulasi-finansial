@@ -1,3 +1,7 @@
+<script>
+	import { base } from '$app/paths';
+</script>
+
 <svelte:head>
 	<title>Simulasi Finansial - Kalkulator Investasi Indonesia</title>
 	<meta
@@ -21,7 +25,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 			<!-- Dana Darurat Card -->
 			<a
-				href="/dana-darurat"
+				href="{base}/dana-darurat"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div
@@ -56,7 +60,7 @@
 
 			<!-- Obligasi Card -->
 			<a
-				href="/obligasi"
+				href="{base}/obligasi"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div
@@ -92,7 +96,7 @@
 
 			<!-- Zakat Mal Card -->
 			<a
-				href="/zakat-mal"
+				href="{base}/zakat-mal"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div
@@ -127,7 +131,7 @@
 
 			<!-- Perencanaan Pensiun Card -->
 			<a
-				href="/perencanaan-pensiun"
+				href="{base}/perencanaan-pensiun"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div
@@ -162,7 +166,7 @@
 
 			<!-- Investasi Berkala Card -->
 			<a
-				href="/investasi-berkala"
+				href="{base}/investasi-berkala"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div
@@ -197,7 +201,7 @@
 
 			<!-- Simulasi KPR Card -->
 			<a
-				href="/simulasi-kpr"
+				href="{base}/simulasi-kpr"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div
@@ -232,7 +236,7 @@
 
 			<!-- Simulasi KKB Card -->
 			<a
-				href="/simulasi-kkb"
+				href="{base}/simulasi-kkb"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div
@@ -264,7 +268,7 @@
 
 			<!-- Investasi Properti Card -->
 			<a
-				href="/investasi-properti"
+				href="{base}/investasi-properti"
 				class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-8 group"
 			>
 				<div

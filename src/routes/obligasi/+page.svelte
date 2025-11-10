@@ -1,4 +1,6 @@
 <script>
+	import { base } from '$app/paths';
+
 	let saldoObligasi = $state(0);
 	let bungaObligasi = $state(0);
 	let durasiObligasi = $state(0);
@@ -78,7 +80,7 @@
 		<!-- Back to Home Button -->
 		<div class="mb-6">
 			<a
-				href="/"
+				href="{base}/"
 				class="inline-flex items-center text-gray-700 hover:text-blue-600 transition-colors duration-200 group"
 			>
 				<svg
